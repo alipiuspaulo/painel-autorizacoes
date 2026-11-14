@@ -118,6 +118,71 @@ tr:hover td{background:#F7F9FC}
 .mlegend{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.7;box-shadow:var(--shadow)}
 .mlegend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
 
+
+/* Abas */
+.tabs{display:flex;align-items:center;gap:10px;padding:12px 20px;background:#F4F6FA;border-bottom:1px solid var(--line)}
+.tab{display:inline-flex;align-items:center;gap:10px;border:2px solid #C9D3E3;background:#fff;color:#0A2A5E;font-weight:700;font-size:15px;padding:10px 20px;border-radius:10px;box-shadow:0 1px 2px rgba(10,42,94,.08);transition:background .15s,border-color .15s,transform .15s}
+.tab svg{width:20px;height:20px}
+.tab:hover{border-color:#1C5FAD;transform:translateY(-1px)}
+.tab.on{background:#0A2A5E;border-color:#0A2A5E;color:#fff;box-shadow:inset 0 -4px 0 #F2B705,0 4px 12px rgba(10,42,94,.22)}
+.tab:focus-visible{outline:3px solid #F2B705;outline-offset:2px}
+[hidden]{display:none!important}
+
+/* Ficha do trecho (janela lateral fora do mapa) */
+.drawer-bg{position:fixed;inset:0;background:rgba(6,18,42,.35);z-index:4000;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-bg.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);background:#fff;z-index:4001;box-shadow:-10px 0 30px rgba(10,42,94,.25);transform:translateX(105%);transition:transform .25s ease-out;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dr-h{background:linear-gradient(100deg,#0A2A5E,#1C5FAD);color:#fff;padding:16px 18px 14px;border-bottom:4px solid var(--yellow);display:flex;gap:12px;align-items:flex-start}
+.dr-h .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#C9D6EC;font-weight:600}
+.dr-h h3{margin:2px 0 6px;font-size:18px;line-height:1.25}
+.dr-h .x{margin-left:auto;border:0;background:rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:8px;font-size:20px;flex:none}
+.dr-h .x:hover{background:rgba(255,255,255,.25)}
+.dr-b{overflow:auto;padding:12px 18px 20px;flex:1}
+.dr-sec{margin:14px 0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue)}
+.attr{width:100%;border-collapse:collapse;font-size:13px}
+.attr th{position:static;background:none;cursor:default;width:42%;color:var(--muted);font-weight:600;font-size:12px;white-space:normal;padding:7px 10px 7px 0;border-bottom:1px solid var(--line2);vertical-align:top}
+.attr td{padding:7px 0;border-bottom:1px solid var(--line2);color:var(--ink);word-break:break-word}
+.attr tr:hover td{background:none}
+.conn{display:flex;flex-wrap:wrap;gap:6px}
+.cbadge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;background:#EEF3FB;color:#0A2A5E;border:1px solid #C9D6EC}
+.cbadge i{width:10px;height:4px;border-radius:2px;display:inline-block}
+.cbadge.no{background:#F4F6FA;color:var(--muted);border-color:var(--line)}
+.dr-f{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap}
+.bt{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;text-decoration:none}
+.bt.out{background:#fff;color:var(--navy)}
+.bt:hover{filter:brightness(1.1)}
+
+/* Aba Detalhes ferroviários */
+.det-main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:14px}
+#map2{height:680px;border-radius:0 0 var(--radius) var(--radius)}
+.side{display:flex;flex-direction:column;max-height:735px}
+#sideList{display:flex;flex-direction:column;min-height:0;flex:1}
+.side .list{overflow:auto;padding:4px 12px 12px;display:grid;gap:6px;align-content:start}
+.ai{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;color:var(--ink)}
+.ai:hover{border-color:var(--blue);background:#F9FBFD}
+.ai b{font-size:13px;line-height:1.3}
+.ai .m{font-size:12px;color:var(--ink2)}
+.ai .r{grid-row:span 2;align-self:center;text-align:right;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.ai .r b{display:block;font-size:15px;color:var(--navy)}
+.ai .cx{grid-column:1/-1;margin-top:5px}
+.dp{padding:6px 16px 16px;overflow:auto}
+.dp .back{border:0;background:none;color:var(--blue);font-size:13px;padding:6px 0 8px;font-weight:600}
+.dp h3{margin:0 0 4px;font-size:17px;color:var(--navy);line-height:1.3}
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.mini div{background:#F4F6FA;border-radius:8px;padding:8px 10px}
+.mini b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mini span{font-size:11.5px;color:var(--muted)}
+.tl{display:grid;gap:4px}
+.tl button{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid var(--line2);background:#fff;border-radius:8px;padding:7px 10px;font-size:12.5px;color:var(--ink)}
+.tl button:hover{border-color:var(--blue)}
+.tl i{width:10px;height:10px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(20,33,61,.3)}
+.mlegend .t{font-weight:600;margin-bottom:2px}
+.det-k{grid-template-columns:repeat(4,minmax(0,1fr))}
+.note2{font-size:11.5px;color:var(--muted);padding:0 16px 10px}
+.chip i.sw{width:14px;height:4px;border-radius:2px;display:inline-block}
+@media (max-width:1280px){.det-main{grid-template-columns:1fr}.side{max-height:none}}
+
 @media (max-width:1280px){
   .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
   .main{grid-template-columns:1fr 1fr}
@@ -156,6 +221,12 @@ tr:hover td{background:#F7F9FC}
     <span class="pill">Dados em Tempo Real</span>
   </div>
 </header>
+
+<div class="tabs" role="tablist" aria-label="Seções do painel">
+  <button class="tab on" role="tab" aria-selected="true" data-t="ov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h6M10 16h6"/></svg>Visão geral</button>
+  <button class="tab" role="tab" aria-selected="false" data-t="det"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Detalhes ferroviários</button>
+</div>
+<div id="tabOv">
 
 <nav class="filters" aria-label="Filtros">
   <div class="fgroup"><span class="flabel">Região</span><div class="seg" id="fRegiao"></div></div>
@@ -219,7 +290,41 @@ tr:hover td{background:#F7F9FC}
     </div>
   </section>
 </main>
+</div>
+<div id="tabDet" hidden>
+  <nav class="filters" aria-label="Filtros dos detalhes">
+    <div class="fgroup"><span class="flabel">Ferrovia</span><select id="dFer" aria-label="Ferrovia"></select></div>
+    <div class="fgroup"><span class="flabel">Situação</span><div class="seg" id="dSit"></div></div>
+    <button class="clear" id="dClear" hidden>Limpar filtros</button>
+  </nav>
+  <main class="wrap">
+    <div id="detLoading" class="loading">Carregando a malha ferroviária federal e analisando as conexões…</div>
+    <section class="kpis det-k" id="detK"></section>
+    <section class="det-main">
+      <div class="card mapcard">
+        <div class="card-h"><h2>Malha ferroviária federal e autorizações</h2><span class="sp"></span><label class="hint" for="baseSel2">Mapa base</label>
+          <select id="baseSel2" class="mapsel" aria-label="Mapa base"><option value="lgray" selected>Cinza claro</option><option value="dgray">Cinza escuro</option><option value="streets">Ruas</option><option value="topo">Topográfico</option><option value="img">Imagem de satélite</option><option value="osm">OpenStreetMap</option></select></div>
+        <div id="map2"></div>
+      </div>
+      <div class="card side">
+        <div id="sideList">
+          <div class="card-h"><h2>Autorizatárias</h2><span class="hint" id="aiCount"></span><span class="sp"></span><input class="search" id="aiSearch" type="search" placeholder="Buscar…" aria-label="Buscar autorizatária" style="width:150px"></div>
+          <div class="note2">Clique em uma autorizatária, na lista ou no mapa, para ver as informações gerais.</div>
+          <div class="list" id="aiList"></div>
+        </div>
+        <div class="dp" id="detPanel" hidden></div>
+      </div>
+    </section>
+  </main>
+</div>
 <div class="foot">Fonte: camada “Ferrovias / Terminais – Autorizatárias”. Dados em tempo real, atualizados em <span id="upd">—</span>.</div>
+
+<div class="drawer-bg" id="drBg"></div>
+<aside class="drawer" id="ficha" role="dialog" aria-modal="true" aria-labelledby="frTitle">
+  <div class="dr-h"><div><div class="k">Ficha do trecho · tabela de atributos</div><h3 id="frTitle">—</h3><div id="frSub"></div></div><button class="x" id="frClose" aria-label="Fechar">×</button></div>
+  <div class="dr-b" id="frBody"></div>
+  <div class="dr-f" id="frFoot"></div>
+</aside>
 
 <script>
 const STATUS=[
@@ -394,9 +499,10 @@ function renderTable(f){
   const q=document.getElementById('tblSearch').value.trim().toLowerCase();
   let t=f.filter(r=>!q||(r.trecho+' '+r.req).toLowerCase().includes(q));
   t.sort((a,b)=>{const x=a[sortK],y=b[sortK];return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'pt-BR'))*sortDir;});
-  document.querySelector('#tbl tbody').innerHTML=t.map(r=>`<tr><td>${r.trecho}</td><td>${r.req}</td><td>${r.uf}</td>
+  document.querySelector('#tbl tbody').innerHTML=t.map(r=>`<tr data-f="${r.id}" style="cursor:pointer" title="Abrir ficha do trecho"><td>${r.trecho}</td><td>${r.req}</td><td>${r.uf}</td>
     <td><span class="st"><i style="background:${SCOL[r.status]||'#999'}"></i>${r.status}</span></td>
     <td class="num">${nf(r.km,1)}</td><td class="num">${nf(r.inv,2)}</td></tr>`).join('');
+  document.querySelectorAll('#tbl tbody tr').forEach(tr=>tr.onclick=()=>openFicha(+tr.dataset.f));
   document.getElementById('tblCount').textContent=`${t.length} de ${D.length}`;
   document.querySelectorAll('#tbl th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k===sortK?(sortDir>0?'ascending':'descending'):'none'));
 }
@@ -420,32 +526,32 @@ function whereAut(){
 const ufReg=r=>r==='Centro-Oeste'?"NM_REGIAO IN ('Centro-Oeste','Centro-oeste')":'NM_REGIAO='+q(r);
 
 function initMap(){ return new Promise(res=>{
-  require(['esri/Map','esri/views/MapView','esri/layers/FeatureLayer'],(EMap,MapView,FeatureLayer)=>{
+  require(['esri/Map','esri/views/MapView','esri/layers/FeatureLayer','esri/widgets/LayerList','esri/widgets/Expand','esri/widgets/Home'],(EMap,MapView,FeatureLayer,LayerList,Expand,Home)=>{
     const line=(c,w)=>({type:'simple-line',color:c,width:w,cap:'round',join:'round'});
-    lyr.uf=new FeatureLayer({url:UFSVC,outFields:['SIGLA_UF','NM_UF','NM_REGIAO'],popupEnabled:false,
+    lyr.uf=new FeatureLayer({url:UFSVC,title:'Limites estaduais',outFields:['SIGLA_UF','NM_UF','NM_REGIAO'],popupEnabled:false,
       renderer:{type:'simple',symbol:{type:'simple-fill',color:[0,0,0,0],outline:{color:[255,255,255,.55],width:.7}}}});
-    lyr.hl=new FeatureLayer({url:UFSVC,popupEnabled:false,definitionExpression:'1=0',
+    lyr.hl=new FeatureLayer({url:UFSVC,listMode:'hide',popupEnabled:false,definitionExpression:'1=0',
       renderer:{type:'simple',symbol:{type:'simple-fill',color:[28,95,173,.18],outline:{color:[242,183,5,1],width:2}}}});
-    lyr.casing=new FeatureLayer({url:SVC,popupEnabled:false,renderer:{type:'simple',symbol:line([20,33,61,.6],5.5)}});
-    lyr.aut=new FeatureLayer({url:SVC,outFields:['TRECHO','REQUERENTE','STATUS','UF','EXTENSÃO','PREV_INVEST'],
+    lyr.casing=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,renderer:{type:'simple',symbol:line([20,33,61,.6],5.5)}});
+    lyr.aut=new FeatureLayer({url:SVC,title:'Trechos autorizados (situação)',outFields:['FID','TRECHO','REQUERENTE','STATUS'],popupEnabled:false,
       renderer:{type:'unique-value',field:'STATUS',defaultSymbol:line('#999',3),
-        uniqueValueInfos:STATUS.map(([s,c])=>({value:s,symbol:line(c,3)}))},
-      popupTemplate:{title:'{TRECHO}',content:[{type:'fields',fieldInfos:[
-        {fieldName:'REQUERENTE',label:'Requerente'},{fieldName:'STATUS',label:'Situação'},{fieldName:'UF',label:'UF'},
-        {fieldName:'EXTENSÃO',label:'Extensão (km)',format:{digitSeparator:true,places:1}},
-        {fieldName:'PREV_INVEST',label:'Investimento (R$ bi)',format:{digitSeparator:true,places:2}}]}]}});
+        uniqueValueInfos:STATUS.map(([s,c])=>({value:s,label:s,symbol:line(c,3)}))}});
+    lyr.fed=new FeatureLayer({url:FEDSVC,title:'Malha ferroviária federal',visible:false,minScale:0,outFields:['SIGLA_COIN','LABEL','TIP_SITUAC','SIGLA','BITOLA','ESTUDOS'],renderer:fedRenderer(),popupTemplate:fedPopup});
     const sel=document.getElementById('baseSel');
-    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr.uf,lyr.hl,lyr.casing,lyr.aut]});
+    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr.uf,lyr.hl,lyr.fed,lyr.casing,lyr.aut]});
     view=new MapView({container:'map',map:m,center:[-52,-14.5],zoom:4,constraints:{snapToZoom:false},
       ui:{components:['zoom','attribution']},popup:{dockEnabled:false}});
     view.navigation.mouseWheelZoomEnabled=false;
     const lg=document.createElement('div'); lg.className='mlegend';
-    lg.innerHTML=STATUS.map(([s,c])=>`<div><i style="background:${c}"></i>${s}</div>`).join('');
+    lg.innerHTML='<div class="t">Situação do trecho</div>'+STATUS.map(([s,c])=>`<div><i style="background:${c}"></i>${s}</div>`).join('')+'<div class="hint" style="margin-top:2px">Clique no trecho para a ficha completa</div>';
     view.ui.add(lg,'bottom-left');
+    const home=new Home({view}); view.ui.add(home,'top-left');
+    view.ui.add(new Expand({view,content:new LayerList({view}),expandIcon:'layers',expandTooltip:'Camadas do mapa',expanded:false}),'top-right');
     view.on('click',async e=>{
       view.navigation.mouseWheelZoomEnabled=true;
       const h=await view.hitTest(e,{include:[lyr.aut,lyr.uf]});
-      if(h.results.some(r=>r.graphic&&r.graphic.layer===lyr.aut)) return;
+      const ha=h.results.find(r=>r.graphic&&r.graphic.layer===lyr.aut);
+      if(ha){ e.stopPropagation(); openFicha(ha.graphic.attributes.FID); return; }
       const u=h.results.find(r=>r.graphic&&r.graphic.layer===lyr.uf);
       if(u){ e.stopPropagation(); set('uf',u.graphic.attributes.SIGLA_UF); }
     });
@@ -453,6 +559,7 @@ function initMap(){ return new Promise(res=>{
     sel.onchange=e=>{ m.basemap=BASEMAPS[e.target.value]; };
     view.when(async()=>{
       try{ BRext=(await lyr.uf.queryExtent()).extent; await view.goTo(BRext.clone().expand(1.02),{animate:false}); }catch(_){}
+      home.viewpoint=view.viewpoint.clone();
       res();
     });
   });
@@ -477,15 +584,256 @@ async function renderMap(){
 
 /* ---------- Dados ao vivo ---------- */
 async function loadData(){
-  const fields=encodeURIComponent('FID,TRECHO,REQUERENTE,STATUS,UF,REGIAO,EXTENSÃO,PREV_INVEST,EMP_DIRETO,EMP_INDIRE');
+  const fields=encodeURIComponent('FID,TRECHO,REQUERENTE,STATUS,UF,REGIAO,EXTENSÃO,PREV_INVEST,EMP_DIRETO,EMP_INDIRE,CARGA,DEM_INICIAL');
   const a=await (await fetch(`${SVC}/query?where=1%3D1&outFields=${fields}&returnGeometry=false&f=json`)).json();
   if(a.error) throw new Error(a.error.message||'erro na consulta');
   D=a.features.map(({attributes:p})=>({id:p.FID,trecho:p.TRECHO||'',req:(p.REQUERENTE||'').trim(),status:p.STATUS||'',
-    uf:p.UF||'',regiao:p.REGIAO||'',km:p['EXTENSÃO']||0,inv:p.PREV_INVEST||0,ed:p.EMP_DIRETO||0,ei:p.EMP_INDIRE||0}));
+    uf:p.UF||'',regiao:p.REGIAO||'',km:p['EXTENSÃO']||0,inv:p.PREV_INVEST||0,ed:p.EMP_DIRETO||0,ei:p.EMP_INDIRE||0,carga:p.CARGA||'',dem:p.DEM_INICIAL||0}));
   const u=await (await fetch(`${UFSVC}/query?where=1%3D1&outFields=SIGLA_UF,NM_UF,NM_REGIAO&returnGeometry=false&f=json`)).json();
   UFS=(u.features||[]).map(({attributes:x})=>({uf:x.SIGLA_UF,nome:x.NM_UF,regiao:x.NM_REGIAO==='Centro-oeste'?'Centro-Oeste':x.NM_REGIAO}));
   UFREG=Object.fromEntries(UFS.map(x=>[x.uf,x.regiao])); UFNOME=Object.fromEntries(UFS.map(x=>[x.uf,x.nome]));
 }
+
+/* ---------- Malha federal: situação e ferrovias ---------- */
+const FEDSVC='https://services.arcgis.com/4CZwpdWHGNPLU7QQ/arcgis/rest/services/Ferrovias_Concedidas_(2021)/FeatureServer/0';
+const FEDSIT=[ // categorias de situação da malha federal
+  ['Em Operação','#1C5FAD','solid',2.6],
+  ['Em Obra','#E0A800','solid',2.6],
+  ['Planejada','#7B3FA0','dash',2],
+  ['Estudo','#0A91A8','short-dot',2],
+  ['Desativada','#8A94A6','short-dash',1.6]];
+const FSCOL=Object.fromEntries(FEDSIT.map(x=>[x[0],x[1]]));
+const FERNOME={RMS:'Rumo Malha Sul',RMP:'Rumo Malha Paulista',RMN:'Rumo Malha Norte',RMO:'Rumo Malha Oeste',RMC:'Rumo Malha Central',MRS:'MRS Logística',
+  FCA:'Ferrovia Centro-Atlântica',EFC:'Estrada de Ferro Carajás',EFVM:'Estrada de Ferro Vitória a Minas',FTC:'Ferrovia Tereza Cristina',FTL:'Ferrovia Transnordestina Logística',
+  EFPO:'Ferroeste',VLI:'VLI – Ferrovia Norte-Sul (tramo central)',NTN:'Ferrovia Norte-Sul – Tramo Norte',FG:'Ferrogrão',FICO:'Ferrovia de Integração Centro-Oeste',
+  FIOL:'Ferrovia de Integração Oeste-Leste',TLSA:'Transnordestina Logística S.A.'};
+const ferLabel=c=>FERNOME[c]?`${c} · ${FERNOME[c]}`:c;
+const fedSym=(sit,w)=>{ const x=FEDSIT.find(f=>f[0]===sit)||['','#8A94A6','solid',1.6]; return {type:'simple-line',color:x[1],width:w||x[3],style:x[2],cap:'round'}; };
+const fedRenderer=()=>({type:'unique-value',field:'TIP_SITUAC',defaultSymbol:fedSym(''),uniqueValueInfos:FEDSIT.map(([s])=>({value:s,label:s,symbol:fedSym(s)}))});
+const fedPopup={title:'{LABEL}',content:[{type:'fields',fieldInfos:[{fieldName:'SIGLA_COIN',label:'Ferrovia'},{fieldName:'SIGLA',label:'Sigla (EF)'},{fieldName:'TIP_SITUAC',label:'Situação'},{fieldName:'BITOLA',label:'Bitola'},{fieldName:'ESTUDOS',label:'Estudos'}]}]};
+const legendFed=()=>{ const d=document.createElement('div'); d.className='mlegend';
+  d.innerHTML='<div class="t">Malha federal (situação)</div>'+FEDSIT.map(([s,c,st])=>`<div><i style="background:${st==='solid'?c:`repeating-linear-gradient(90deg,${c} 0 4px,transparent 4px 7px)`}"></i>${s}</div>`).join('')+
+    '<div class="t" style="margin-top:4px">Autorizações</div><div><i style="background:#C2410C;height:5px"></i>Trecho autorizado</div><div><i style="background:#F2B705;width:10px;height:10px;border-radius:50%;border:2px solid #14213D"></i>Ponto de conexão</div>';
+  return d; };
+
+/* ---------- Geometrias e análise de conexão ---------- */
+let FED=[], AGEO={}, CONN={}, connReady=null;
+async function fetchGeo(url,fields,offset){
+  let out=[], off=0;
+  for(;;){
+    const p=new URLSearchParams({where:'1=1',outFields:fields,returnGeometry:'true',outSR:'4326',maxAllowableOffset:offset,geometryPrecision:'4',resultOffset:off,resultRecordCount:2000,f:'json'});
+    const j=await (await fetch(url+'/query?'+p)).json(); if(j.error) throw new Error(j.error.message);
+    out=out.concat(j.features); if(!j.exceededTransferLimit&&j.features.length<2000) break; off+=j.features.length;
+  }
+  return out;
+}
+/* Conexão = algum vértice do trecho autorizado a até CONN_KM de uma linha da malha federal (análise geográfica automática). */
+const CONN_KM=3;
+function analyse(){
+  const cell=0.1, grid=new Map(), pad=CONN_KM/100+0.01;
+  const key=(i,j)=>i+'|'+j;
+  FED.forEach((f,fi)=>{ if(!f.code) return; (f.paths||[]).forEach(path=>{ for(let k=1;k<path.length;k++){
+    const a=path[k-1], b=path[k];
+    const x0=Math.floor((Math.min(a[0],b[0])-pad)/cell), x1=Math.floor((Math.max(a[0],b[0])+pad)/cell);
+    const y0=Math.floor((Math.min(a[1],b[1])-pad)/cell), y1=Math.floor((Math.max(a[1],b[1])+pad)/cell);
+    for(let i=x0;i<=x1;i++) for(let j=y0;j<=y1;j++){ const kk=key(i,j); if(!grid.has(kk)) grid.set(kk,[]); grid.get(kk).push([a,b,fi]); }
+  }}); });
+  const dist=(p,a,b)=>{ const kx=111.32*Math.cos(p[1]*Math.PI/180), ky=110.57;
+    const ax=(a[0]-p[0])*kx, ay=(a[1]-p[1])*ky, bx=(b[0]-p[0])*kx, by=(b[1]-p[1])*ky;
+    const dx=bx-ax, dy=by-ay, L=dx*dx+dy*dy; let t=L?-(ax*dx+ay*dy)/L:0; t=Math.max(0,Math.min(1,t));
+    const x=ax+t*dx, y=ay+t*dy; return Math.sqrt(x*x+y*y); };
+  CONN={};
+  Object.entries(AGEO).forEach(([fid,paths])=>{
+    const best={};
+    paths.forEach(path=>path.forEach(p=>{
+      const segs=grid.get(key(Math.floor(p[0]/cell),Math.floor(p[1]/cell)))||[];
+      segs.forEach(([a,b,fi])=>{ const d=dist(p,a,b); if(d>CONN_KM) return; const f=FED[fi], k=f.code+'|'+f.sit;
+        if(!best[k]||d<best[k].d) best[k]={code:f.code,sit:f.sit,d,pt:p}; });
+    }));
+    CONN[fid]=Object.values(best).sort((a,b)=>(a.sit==='Em Operação'?0:1)-(b.sit==='Em Operação'?0:1)||a.d-b.d);
+  });
+}
+function ensureConn(){
+  if(!connReady) connReady=(async()=>{
+    const [fed,aut]=await Promise.all([fetchGeo(FEDSVC,'FID,SIGLA_COIN,TIP_SITUAC','0.003'),fetchGeo(SVC,'FID','0.001')]);
+    const lenKm=paths=>(paths||[]).reduce((s,pa)=>{ for(let k=1;k<pa.length;k++){ const a=pa[k-1],b=pa[k],kx=111.32*Math.cos((a[1]+b[1])/2*Math.PI/180); s+=Math.hypot((b[0]-a[0])*kx,(b[1]-a[1])*110.57);} return s; },0);
+    FED=fed.map(f=>({code:String(f.attributes.SIGLA_COIN||'').trim(),sit:f.attributes.TIP_SITUAC,paths:f.geometry&&f.geometry.paths,km:lenKm(f.geometry&&f.geometry.paths)}));
+    AGEO=Object.fromEntries(aut.filter(f=>f.geometry).map(f=>[f.attributes.FID,f.geometry.paths]));
+    analyse();
+  })();
+  return connReady;
+}
+const concedida=c=>c.sit==='Em Operação';
+const connBadges=(list,empty)=>list&&list.length?`<div class="conn">${list.map(c=>`<span class="cbadge" title="${ferLabel(c.code)} · ${c.sit} · ${nf(c.d,1)} km"><i style="background:${FSCOL[c.sit]||'#8A94A6'}"></i>${c.code}${concedida(c)?'':' · '+c.sit.toLowerCase()}</span>`).join('')}</div>`:`<div class="conn"><span class="cbadge no">${empty||'Sem conexão identificada'}</span></div>`;
+
+/* ---------- Ficha do trecho (tabela de atributos completa, fora do mapa) ---------- */
+const FICHA=[
+  ['Identificação',[['ID','ID'],['TRECHO','Trecho'],['SIGLA','Sigla'],['REQUERENTE','Requerente'],['DESCRICAO','Descrição'],['PROCESSO','Processo']]],
+  ['Situação',[['STATUS','Situação'],['OBRA','Obra'],['EXTRATO','Extrato'],['PUBLICACAO','Publicação'],['CELEBRACAO','Celebração do contrato'],['DEL_ANTT','Deliberação ANTT'],['CONTRATO','Contrato'],['OBS','Observações']]],
+  ['Traçado',[['EXTENSÃO','Extensão (km)'],['BITOLA','Bitola'],['UF','UF'],['REGIAO','Região'],['CD_INICIAL','Cidade inicial'],['UF_INICIAL','Estado inicial'],['CD_FINAL','Cidade final'],['UF_FINAL','Estado final']]],
+  ['Operação e investimento',[['CARGA','Tipo de carga'],['ESP_CARGA','Espécie de carga'],['DEM_INICIAL','Demanda inicial (t/ano)'],['PREV_INVEST','Previsão de investimento (R$ bi)'],['FONTE_REQ','Fonte de investimento'],['EMP_DIRETO','Empregos diretos'],['EMP_INDIRE','Empregos indiretos'],['INI_OPER','Previsão de início das operações']]]
+];
+let FTYPES=null;
+const drawer=document.getElementById('ficha'), drBg=document.getElementById('drBg');
+const closeFicha=()=>{ drawer.classList.remove('on'); drBg.classList.remove('on'); };
+document.getElementById('frClose').onclick=closeFicha; drBg.onclick=closeFicha;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&drawer.classList.contains('on')) closeFicha(); });
+function fmtAttr(k,v){
+  if(v==null||v==='') return '<span style="color:#9AA4B2">—</span>';
+  const t=FTYPES&&FTYPES[k];
+  if(t==='esriFieldTypeDate') return new Date(v).toLocaleDateString('pt-BR',{timeZone:'UTC'});
+  if(t==='esriFieldTypeDateOnly'){ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(v); return m?`${m[3]}/${m[2]}/${m[1]}`:v; }
+  if(typeof v==='number') return k==='PREV_INVEST'?nf(v,2):k==='EXTENSÃO'?nf(v,1):nf(v);
+  if(/^https?:\/\//.test(v)) return `<a href="${v}" target="_blank" rel="noopener">Abrir documento ↗</a>`;
+  return String(v).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+async function openFicha(fid){
+  drawer.classList.add('on'); drBg.classList.add('on');
+  document.getElementById('frTitle').textContent='Carregando…'; document.getElementById('frBody').innerHTML=''; document.getElementById('frFoot').innerHTML='';
+  if(!FTYPES){ const m=await (await fetch(SVC+'?f=json')).json(); FTYPES=Object.fromEntries(m.fields.map(f=>[f.name,f.type])); }
+  const j=await (await fetch(SVC+'/query?'+new URLSearchParams({objectIds:fid,outFields:'*',returnGeometry:'false',f:'json'}))).json();
+  const a=(j.features&&j.features[0]&&j.features[0].attributes)||{};
+  document.getElementById('frTitle').textContent=a.TRECHO||'Trecho';
+  document.getElementById('frSub').innerHTML=`<span class="st" style="color:#fff"><i style="background:${SCOL[a.STATUS]||'#999'}"></i>${a.STATUS||''}</span>`;
+  const used=new Set(['FID','Shape__Length']);
+  let h=FICHA.map(([sec,fs])=>{ fs.forEach(([k])=>used.add(k)); return `<div class="dr-sec">${sec}</div><table class="attr">${fs.map(([k,l])=>`<tr><th>${l}</th><td>${fmtAttr(k,a[k])}</td></tr>`).join('')}</table>`; }).join('');
+  const rest=Object.keys(a).filter(k=>!used.has(k));
+  if(rest.length) h+=`<div class="dr-sec">Outros atributos</div><table class="attr">${rest.map(k=>`<tr><th>${k}</th><td>${fmtAttr(k,a[k])}</td></tr>`).join('')}</table>`;
+  h+=`<div class="dr-sec">Conexão com a malha federal</div><div id="frConn" class="hint">Analisando…</div>`;
+  document.getElementById('frBody').innerHTML=h;
+  document.getElementById('frFoot').innerHTML=`<button class="bt" id="frZoom">Ver no mapa</button><button class="bt out" id="frReq">Ver autorizatária</button>`;
+  document.getElementById('frZoom').onclick=()=>{ closeFicha(); zoomTrecho(fid); };
+  document.getElementById('frReq').onclick=()=>{ closeFicha(); showTab('det'); selectReq((a.REQUERENTE||'').trim()); };
+  ensureConn().then(()=>{ const el=document.getElementById('frConn'); if(el) el.outerHTML=connBadges(CONN[fid])+`<div class="note2" style="padding:6px 0 0">Análise geográfica automática: vértices do trecho a até ${CONN_KM} km de uma ferrovia federal.</div>`; }).catch(()=>{});
+}
+function zoomTrecho(fid){
+  const v=TAB==='det'&&view2?view2:view, L=TAB==='det'&&view2?lyr2.aut:lyr.aut; if(!v) return;
+  L.queryExtent({objectIds:[fid]}).then(r=>{ if(r.extent) v.goTo(r.extent.clone().expand(1.6),{duration:700}); }).catch(()=>{});
+}
+
+/* ---------- Aba Detalhes ferroviários ---------- */
+const DS={fer:null,sit:null};
+let view2=null, lyr2={}, TAB='ov', detSel=null, FEDKM=null;
+const sitWhere=()=>{ const c=[]; if(DS.fer) c.push("SIGLA_COIN LIKE '%"+DS.fer.replace(/'/g,"''")+"%'"); if(DS.sit) c.push('TIP_SITUAC='+q(DS.sit)); return c.length?c.join(' AND '):'1=1'; };
+const connMatch=c=>(!DS.fer||c.code===DS.fer)&&(!DS.sit||c.sit===DS.sit);
+const trechosDet=()=>D.filter(r=>!(DS.fer||DS.sit)||(CONN[r.id]||[]).some(connMatch));
+function reqGroups(list){
+  const by={}; list.forEach(r=>{ const g=(by[r.req]??={req:r.req,tr:[],km:0,inv:0,ed:0,ei:0,conn:{}}); g.tr.push(r); g.km+=r.km; g.inv+=r.inv; g.ed+=r.ed; g.ei+=r.ei;
+    (CONN[r.id]||[]).forEach(c=>{ const k=c.code+'|'+c.sit; if(!g.conn[k]||c.d<g.conn[k].d) g.conn[k]=c; }); });
+  return Object.values(by).map(g=>Object.assign(g,{conn:Object.values(g.conn).sort((a,b)=>(concedida(a)?0:1)-(concedida(b)?0:1)||a.code.localeCompare(b.code))})).sort((a,b)=>b.km-a.km);
+}
+function renderDetFilters(){
+  const fers=[...new Set(FED.map(f=>f.code).filter(Boolean))].sort();
+  const sel=document.getElementById('dFer');
+  sel.innerHTML='<option value="">Todas</option>'+fers.map(c=>`<option value="${c}" ${DS.fer===c?'selected':''}>${ferLabel(c)}</option>`).join('');
+  sel.onchange=()=>{ DS.fer=sel.value||null; renderDet(true); };
+  const km={}; FED.filter(f=>!DS.fer||f.code===DS.fer).forEach(f=>{ km[f.sit]=(km[f.sit]||0)+1; });
+  document.getElementById('dSit').innerHTML=`<button class="chip ${!DS.sit?'on':''}" data-s="">Todas</button>`+FEDSIT.map(([s,c])=>`<button class="chip ${DS.sit===s?'on':''}" data-s="${s}" ${km[s]?'':'disabled'}><i class="sw" style="background:${c}"></i>${s}</button>`).join('');
+  document.querySelectorAll('#dSit .chip').forEach(b=>b.onclick=()=>{ DS.sit=b.dataset.s||null; renderDet(true); });
+  document.getElementById('dClear').hidden=!(DS.fer||DS.sit);
+}
+document.getElementById('dClear').onclick=()=>{ DS.fer=null; DS.sit=null; renderDet(true); };
+function renderDetKPIs(){
+  const t=trechosDet(), g=reqGroups(t), con=g.filter(x=>x.conn.some(concedida));
+  const tc=t.filter(r=>(CONN[r.id]||[]).some(concedida));
+  const card=(ic,lb,val,sub,subv)=>`<div class="card kpi"><div class="ic">${IC[ic]}</div><div class="lb">${lb}</div><div class="vl">${val}</div><div class="ft"><span class="k">${sub}</span><b>${subv}</b></div></div>`;
+  document.getElementById('detK').innerHTML=
+    card('tr','Malha federal exibida',`${nf(FEDKM||0)}<small>km</small>`,'Ferrovias',new Set(FED.filter(f=>(!DS.fer||f.code===DS.fer)&&(!DS.sit||f.sit===DS.sit)).map(f=>f.code).filter(Boolean)).size)+
+    card('ei','Autorizatárias',nf(g.length),'Com conexão à malha concedida',nf(con.length))+
+    card('km','Trechos autorizados',nf(t.length),'Conectados à malha em operação',nf(tc.length))+
+    card('ed','Extensão autorizada',`${nf(t.reduce((s,r)=>s+r.km,0),0)}<small>km</small>`,'Em trechos conectados',`${nf(tc.reduce((s,r)=>s+r.km,0),0)} km`);
+}
+function renderAIList(){
+  const q2=(document.getElementById('aiSearch').value||'').toLowerCase();
+  const g=reqGroups(trechosDet()).filter(x=>!q2||x.req.toLowerCase().includes(q2));
+  document.getElementById('aiCount').textContent=`${g.length}`;
+  document.getElementById('aiList').innerHTML=g.map(x=>`<button class="ai" data-r="${x.req.replace(/"/g,'&quot;')}"><b>${x.req}</b><span class="r"><b>${nf(x.km,0)}</b>km</span>
+    <span class="m">${x.tr.length} trecho${x.tr.length>1?'s':''} · R$ ${nf(x.inv,1)} bi</span>
+    <span class="cx">${connBadges(x.conn.filter(connMatch))}</span></button>`).join('')||'<div class="hint" style="padding:12px">Nenhuma autorizatária conectada para os filtros escolhidos.</div>';
+  document.querySelectorAll('#aiList .ai').forEach(b=>b.onclick=()=>selectReq(b.dataset.r));
+}
+document.getElementById('aiSearch').oninput=renderAIList;
+function selectReq(req){
+  detSel=req; const g=reqGroups(D.filter(r=>r.req===req))[0]; if(!g){ detSel=null; return; }
+  const st={}; g.tr.forEach(r=>st[r.status]=(st[r.status]||0)+1);
+  const ufs=[...new Set(g.tr.map(r=>r.uf).filter(Boolean))].sort();
+  const cargas=[...new Set(g.tr.flatMap(r=>String(r.carga||'').split(/,\s*/)).filter(Boolean))];
+  const dem=g.tr.reduce((s,r)=>s+(r.dem||0),0);
+  const p=document.getElementById('detPanel');
+  p.innerHTML=`<button class="back" id="dpBack">← Todas as autorizatárias</button>
+    <div class="flabel">Autorizatária</div><h3>${g.req}</h3>
+    <div class="mini"><div><b>${g.tr.length}</b><span>trechos</span></div><div><b>${nf(g.km,0)}</b><span>km autorizados</span></div><div><b>${nf(g.inv,1)}</b><span>R$ bi previstos</span></div>
+      <div><b>${nf(g.ed)}</b><span>empregos diretos</span></div><div><b>${nf(g.ei)}</b><span>empregos indiretos</span></div><div><b>${dem?nf(dem/1e6,1):'—'}</b><span>milhões t/ano (demanda)</span></div></div>
+    <div class="dr-sec">Situação dos trechos</div><div class="conn">${STATUS.filter(([s])=>st[s]).map(([s,c])=>`<span class="cbadge"><i style="background:${c};height:8px;width:8px"></i>${s}: ${st[s]}</span>`).join('')}</div>
+    <div class="dr-sec">Conexão com a malha federal</div>${connBadges(g.conn)}
+    <div class="dr-sec">Estados</div><div class="hint">${ufs.map(u=>`${u} — ${UFNOME[u]||u}`).join(' · ')||'—'}</div>
+    ${cargas.length?`<div class="dr-sec">Cargas</div><div class="hint">${cargas.join(' · ')}</div>`:''}
+    <div class="dr-sec">Trechos</div><div class="tl">${g.tr.sort((a,b)=>b.km-a.km).map(r=>`<button data-f="${r.id}"><i style="background:${SCOL[r.status]||'#999'}"></i><span>${r.trecho}</span><span class="hint">${nf(r.km,0)} km ›</span></button>`).join('')}</div>
+    <div class="note2" style="padding:10px 0 0">Clique em um trecho para abrir a ficha completa.</div>`;
+  document.getElementById('sideList').hidden=true; p.hidden=false; p.scrollTop=0;
+  document.getElementById('dpBack').onclick=()=>{ detSel=null; p.hidden=true; document.getElementById('sideList').hidden=false; drawSel(); };
+  p.querySelectorAll('.tl button').forEach(b=>b.onclick=()=>openFicha(+b.dataset.f));
+  drawSel();
+}
+function drawSel(){
+  if(!view2) return;
+  const ids=detSel?D.filter(r=>r.req===detSel).map(r=>r.id):[];
+  lyr2.sel.definitionExpression=ids.length?`FID IN (${ids.join(',')})`:'1=0';
+  lyr2.pts.removeAll();
+  const {Graphic}=window.__E;
+  const src=ids.length?ids:trechosDet().map(r=>r.id);
+  src.forEach(id=>(CONN[id]||[]).filter(c=>connMatch(c)&&(ids.length||concedida(c))).forEach(c=>lyr2.pts.add(new Graphic({geometry:{type:'point',longitude:c.pt[0],latitude:c.pt[1]},
+    symbol:{type:'simple-marker',size:ids.length?12:8,color:'#F2B705',outline:{color:'#14213D',width:1.5}},
+    attributes:{t:`${D.find(r=>r.id===id).trecho} ↔ ${ferLabel(c.code)} (${c.sit})`},popupTemplate:{title:'Ponto de conexão',content:'{t}'}}))));
+  if(ids.length) lyr2.aut.queryExtent({objectIds:ids}).then(r=>{ if(r.extent) view2.goTo(r.extent.clone().expand(1.5),{duration:700}); }).catch(()=>{});
+}
+async function renderDet(refit){
+  renderDetFilters();
+  if(lyr2.fed) lyr2.fed.definitionExpression=sitWhere();
+  FEDKM=FED.filter(f=>(!DS.fer||f.code===DS.fer)&&(!DS.sit||f.sit===DS.sit)).reduce((s,f)=>s+f.km,0);
+  const ids=trechosDet().map(r=>r.id);
+  if(lyr2.aut){ const w=(DS.fer||DS.sit)?(ids.length?`FID IN (${ids.join(',')})`:'1=0'):'1=1'; lyr2.aut.definitionExpression=w; lyr2.casing.definitionExpression=w; }
+  renderDetKPIs(); renderAIList(); drawSel();
+  if(refit&&view2&&!detSel){ try{ const e=(DS.fer||DS.sit)?(await lyr2.fed.queryExtent({where:sitWhere()})).extent:null; view2.goTo(e?e.clone().expand(1.2):view2.__home,{duration:600}).catch(()=>{}); }catch(_){} }
+}
+function initMap2(){ return new Promise(res=>{
+  require(['esri/Map','esri/views/MapView','esri/layers/FeatureLayer','esri/layers/GraphicsLayer','esri/widgets/LayerList','esri/widgets/Expand','esri/widgets/Home','esri/Graphic'],(EMap,MapView,FeatureLayer,GraphicsLayer,LayerList,Expand,Home,Graphic)=>{
+    window.__E={Graphic};
+    const line=(c,w)=>({type:'simple-line',color:c,width:w,cap:'round',join:'round'});
+    lyr2.uf=new FeatureLayer({url:UFSVC,title:'Limites estaduais',popupEnabled:false,renderer:{type:'simple',symbol:{type:'simple-fill',color:[0,0,0,0],outline:{color:[110,120,140,.45],width:.6}}}});
+    lyr2.fed=new FeatureLayer({url:FEDSVC,title:'Malha ferroviária federal (situação)',minScale:0,outFields:['SIGLA_COIN','LABEL','TIP_SITUAC','SIGLA','BITOLA','ESTUDOS'],renderer:fedRenderer(),popupTemplate:fedPopup});
+    lyr2.casing=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,renderer:{type:'simple',symbol:line([255,255,255,.95],6)}});
+    lyr2.aut=new FeatureLayer({url:SVC,title:'Trechos autorizados',outFields:['FID','REQUERENTE'],popupEnabled:false,renderer:{type:'simple',symbol:line('#C2410C',3.2)}});
+    lyr2.sel=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,definitionExpression:'1=0',renderer:{type:'simple',symbol:line([242,183,5,.9],9)}});
+    lyr2.pts=new GraphicsLayer({title:'Pontos de conexão'});
+    const sel=document.getElementById('baseSel2');
+    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr2.uf,lyr2.fed,lyr2.sel,lyr2.casing,lyr2.aut,lyr2.pts]});
+    view2=new MapView({container:'map2',map:m,center:[-52,-14.5],zoom:4,constraints:{snapToZoom:false},ui:{components:['zoom','attribution']},popup:{dockEnabled:false}});
+    view2.navigation.mouseWheelZoomEnabled=false;
+    const home=new Home({view:view2}); view2.ui.add(home,'top-left');
+    view2.ui.add(new Expand({view:view2,content:new LayerList({view:view2}),expandIcon:'layers',expandTooltip:'Camadas do mapa',expanded:false}),'top-right');
+    view2.ui.add(legendFed(),'bottom-left');
+    sel.onchange=e=>{ m.basemap=BASEMAPS[e.target.value]; };
+    view2.on('click',async e=>{ view2.navigation.mouseWheelZoomEnabled=true;
+      const h=await view2.hitTest(e,{include:[lyr2.aut]}); const g=h.results.find(r=>r.graphic&&r.graphic.layer===lyr2.aut);
+      if(g){ e.stopPropagation(); selectReq((g.graphic.attributes.REQUERENTE||'').trim()); } });
+    view2.on('pointer-leave',()=>{ view2.navigation.mouseWheelZoomEnabled=false; });
+    view2.when(async()=>{ try{ const ext=(await lyr2.uf.queryExtent()).extent; await view2.goTo(ext.clone().expand(1.02),{animate:false}); }catch(_){} view2.__home=view2.viewpoint.clone(); home.viewpoint=view2.__home; res(); });
+  });
+}); }
+async function showTab(t){
+  TAB=t;
+  document.querySelectorAll('.tab').forEach(b=>{ const on=b.dataset.t===t; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
+  document.getElementById('tabOv').hidden=t!=='ov'; document.getElementById('tabDet').hidden=t!=='det';
+  if(t==='ov'){ setTimeout(()=>{cStatus.resize();cReq.resize();cUF.resize();},0); return; }
+  if(!view2){
+    try{ await ensureConn(); }catch(e){ document.getElementById('detLoading').textContent='Não foi possível carregar a malha federal: '+e.message; return; }
+    document.getElementById('detLoading').hidden=true;
+    await initMap2();
+  }
+  renderDet(false);
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
 
 /* ---------- Render ---------- */
 function render(){
@@ -499,6 +847,10 @@ function render(){
   document.getElementById('upd').textContent=new Date().toLocaleString('pt-BR');
   render();
   await initMap(); lastKey=null; renderMap();
+  // links diretos: #detalhes, #detalhes/<FID> (abre a autorizatária do trecho), #ficha/<FID>
+  const hm=/#(detalhes|ficha)(?:\/(\d+))?/.exec(location.hash);
+  if(hm&&hm[1]==='detalhes'){ await showTab('det'); const r=hm[2]&&D.find(x=>x.id===+hm[2]); if(r) selectReq(r.req); }
+  else { ensureConn().catch(()=>{}); if(hm&&hm[2]) openFicha(+hm[2]); }
 })();
 window.addEventListener('resize',()=>{cStatus.resize();cReq.resize();cUF.resize();});
 </script>
