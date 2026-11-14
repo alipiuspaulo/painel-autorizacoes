@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autorizações Ferroviárias</title>
+<link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script src="https://js.arcgis.com/4.30/"></script>
+<style>
+:root{
+  --navy:#0A2A5E; --blue:#1C5FAD; --blue-soft:#DCE7F5; --yellow:#F2B705;
+  --ink:#14213D; --ink2:#4A5568; --muted:#6A7486;
+  --bg:#EEF1F5; --card:#FFFFFF; --line:#DDE3EB; --line2:#EDF0F4;
+  --radius:10px; --shadow:0 1px 2px rgba(10,42,94,.06),0 2px 8px rgba(10,42,94,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 "Segoe UI","Avenir Next",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer}
+
+/* Cabeçalho */
+.top{background:var(--navy);color:#fff;border-bottom:3px solid var(--yellow)}
+.top-in{display:flex;align-items:center;gap:14px;padding:12px 20px}
+.logo{height:36px;width:auto;display:block}
+.vsep{width:1px;align-self:stretch;background:rgba(255,255,255,.28);margin:2px 4px}
+.top h1{margin:0;font-size:19px;font-weight:600;letter-spacing:.01em}
+.top .sub{font-size:12px;color:#B9C7DD;margin-top:1px}
+.top .sp{flex:1}
+.pill{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.35);color:#E4EAF4;white-space:nowrap}
+
+/* Barra de filtros */
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:10px 20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1000}
+.flabel{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:2px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 12px;border-radius:999px;font-size:13px;display:flex;gap:6px;align-items:center;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--blue)}
+.chip .n{font-size:11px;color:var(--muted);background:var(--line2);border-radius:999px;padding:0 6px}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip.on .n{background:rgba(255,255,255,.18);color:#fff}
+.chip:disabled{opacity:.4;cursor:default}
+select{font:inherit;padding:6px 30px 6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.fgroup{display:flex;align-items:center;gap:8px}
+.active{display:flex;gap:6px;flex-wrap:wrap}
+.tag{background:var(--blue-soft);color:var(--navy);border:0;border-radius:999px;padding:4px 10px;font-size:12px}
+.tag::after{content:" ✕";opacity:.6}
+.clear{border:0;background:none;color:var(--blue);font-size:13px;padding:4px 6px;text-decoration:underline}
+
+/* Layout */
+.wrap{padding:16px 20px 24px;display:grid;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;align-items:center;gap:10px;padding:12px 16px 4px}
+.card-h h2{margin:0;font-size:14px;font-weight:600;color:var(--ink)}
+.card-h .hint{font-size:12px;color:var(--muted)}
+.card-h .sp{flex:1}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.kpi{padding:14px 16px 14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:start;border-top:3px solid var(--blue)}
+.kpi .ic{grid-row:span 2;width:40px;height:40px;border-radius:10px;background:var(--blue-soft);display:grid;place-items:center;color:var(--navy)}
+.kpi .ic svg{width:22px;height:22px}
+.kpi .lb{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.kpi .vl{font-size:28px;font-weight:700;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .vl small{font-size:14px;font-weight:600;color:var(--ink2);margin-left:4px}
+.kpi .ft{grid-column:1/-1;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.kpi .ft .k{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.kpi .ft .k::before{content:"";width:8px;height:8px;border-radius:2px;background:#28AD21}
+.kpi .ft b{font-size:17px;font-weight:700;color:#1B6E16;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .ft b small{font-size:12px;font-weight:600;margin-left:3px}
+.kpi .note{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
+.mapsel{font-size:12px;padding:4px 26px 4px 8px}
+
+/* Linha principal */
+.main{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(380px,1.5fr) minmax(360px,1.15fr);gap:14px}
+.col{display:grid;gap:14px;grid-template-rows:auto 1fr;min-width:0}
+#map{height:100%;min-height:560px;border-radius:0 0 var(--radius) var(--radius)}
+.mapcard{display:flex;flex-direction:column}
+.mapcard #map{flex:1}
+.toggle{display:flex;background:var(--line2);border-radius:8px;padding:2px}
+.toggle button{border:0;background:none;padding:4px 10px;border-radius:6px;font-size:12px;color:var(--ink2)}
+.toggle button.on{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chart{width:100%}
+.legend{display:grid;gap:2px;padding:4px 14px 14px}
+.lg{display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center;padding:5px 6px;border-radius:6px;border:0;background:none;text-align:left;color:var(--ink);font-size:13px}
+.lg:hover{background:var(--line2)}
+.lg.off{opacity:.38}
+.lg .dot{width:10px;height:10px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(20,33,61,.25)}
+.st i,.mlegend i{box-shadow:inset 0 0 0 1px rgba(20,33,61,.3)}
+.lg .c{font-variant-numeric:tabular-nums;font-weight:600}
+.lg .p{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;min-width:44px;text-align:right}
+.reg{display:grid;gap:8px;padding:6px 16px 16px}
+.rg{display:grid;grid-template-columns:96px 1fr 70px;gap:10px;align-items:center;border:0;background:none;padding:3px 0;text-align:left;color:var(--ink);font-size:13px}
+.rg .bar{height:10px;background:var(--line2);border-radius:5px;overflow:hidden}
+.rg .bar i{display:block;height:100%;background:var(--blue);border-radius:0 5px 5px 0;transition:width .3s}
+.rg.on .bar i{background:var(--navy)}
+.rg.dim{opacity:.4}
+.rg .v{font-size:12px;color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
+.more{border:0;background:none;color:var(--blue);font-size:12px;padding:0 16px 12px;text-align:left}
+
+/* Linha inferior */
+.bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px}
+.tbl-wrap{max-height:330px;overflow:auto;margin:6px 0 0;border-top:1px solid var(--line2)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;background:#F7F9FC;color:var(--ink2);font-weight:600;text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;font-size:12px}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+th[aria-sort="ascending"]::after{content:" ▲";font-size:9px}
+th[aria-sort="descending"]::after{content:" ▼";font-size:9px}
+td{padding:7px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:hover td{background:#F7F9FC}
+.st{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.st i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.search{font:inherit;border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:220px}
+.foot{font-size:11px;color:var(--muted);padding:0 20px 18px}
+
+/* Leaflet */
+.esri-view{--esri-view-outline-color:transparent}
+#map .esri-view-surface{background:#0b1a33}
+.loading{padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:10px;color:var(--ink2)}
+.mlegend{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.7;box-shadow:var(--shadow)}
+.mlegend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+@media (max-width:1280px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .main{grid-template-columns:1fr 1fr}
+  .mapcard{grid-column:1/-1;order:-1}
+  .bottom{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .main{grid-template-columns:1fr}
+  .wrap,.filters,.top-in{padding-left:16px;padding-right:16px}
+  .kpi .vl{font-size:22px}
+  #map{min-height:380px}
+  .search{width:100%}
+  .top-in{flex-wrap:wrap}
+  .top .sp{display:none}
+  .pill{order:3;white-space:normal}
+  .fgroup{flex-wrap:wrap}
+}
+@media (max-width:520px){
+  .kpis{grid-template-columns:1fr}
+  .top h1{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <img class="logo" src="https://imagem-govfed.maps.arcgis.com/sharing/rest/content/items/b9b84e3d709e4bd9af5e652588ace76e/resources/images/logo_antt_header.png" alt="ANTT – Agência Nacional de Transportes Terrestres">
+    <span class="vsep" aria-hidden="true"></span>
+    <div>
+      <h1>Autorizações Ferroviárias</h1>
+      <div class="sub">Contratos de adesão e requerimentos de autorização ferroviária</div>
+    </div>
+    <div class="sp"></div>
+    <span class="pill">Dados ao vivo · ArcGIS Online</span>
+  </div>
+</header>
+
+<nav class="filters" aria-label="Filtros">
+  <div class="fgroup"><span class="flabel">Região</span><div class="seg" id="fRegiao"></div></div>
+  <div class="fgroup"><span class="flabel">UF</span><select id="fUF" aria-label="UF"></select></div>
+  <div class="active" id="fActive"></div>
+  <button class="clear" id="fClear" hidden>Limpar filtros</button>
+</nav>
+
+<main class="wrap">
+  <div id="loading" class="loading">Carregando dados da camada…</div>
+  <section class="kpis" id="kpis"></section>
+
+  <section class="main">
+    <div class="col">
+      <div class="card">
+        <div class="card-h"><h2>Situação dos trechos</h2><span class="sp"></span><span class="hint">clique para filtrar</span></div>
+        <div id="cStatus" class="chart" style="height:200px"></div>
+        <div class="legend" id="lgStatus"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Extensão por região</h2><span class="sp"></span><span class="hint">km</span></div>
+        <div class="reg" id="regBars"></div>
+      </div>
+    </div>
+
+    <div class="card mapcard">
+      <div class="card-h"><h2>Mapa dos trechos</h2><span class="sp"></span><label class="hint" for="baseSel">Mapa base</label>
+        <select id="baseSel" class="mapsel" aria-label="Mapa base">
+          <option value="lgray">Cinza claro</option><option value="dgray">Cinza escuro</option>
+          <option value="streets">Ruas</option><option value="topo">Topográfico</option>
+          <option value="img" selected>Imagem de satélite</option><option value="osm">OpenStreetMap</option>
+        </select></div>
+      <div id="map"></div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="card-h">
+        <h2>Requerentes</h2><span class="sp"></span>
+        <div class="toggle" id="reqMetric" role="group" aria-label="Métrica">
+          <button data-m="n" class="on">Trechos</button><button data-m="km">Km</button><button data-m="inv">R$ bi</button>
+        </div>
+      </div>
+      <div class="card-h" style="padding-top:2px"><span class="hint" id="reqHint"></span></div>
+      <div id="cReq" class="chart" style="flex:1;min-height:470px"></div>
+      <button class="more" id="reqMore"></button>
+    </div>
+  </section>
+
+  <section class="bottom">
+    <div class="card">
+      <div class="card-h"><h2>Previsão de investimento por UF</h2><span class="sp"></span><span class="hint">R$ bilhões</span></div>
+      <div id="cUF" class="chart" style="height:330px"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Trechos</h2><span class="hint" id="tblCount"></span><span class="sp"></span>
+        <input class="search" id="tblSearch" type="search" placeholder="Buscar trecho ou requerente…" aria-label="Buscar"></div>
+      <div class="tbl-wrap"><table id="tbl"><thead><tr>
+        <th data-k="trecho">Trecho</th><th data-k="req">Requerente</th><th data-k="uf">UF</th>
+        <th data-k="status">Situação</th><th data-k="km" class="num">Km</th><th data-k="inv" class="num">R$ bi</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+</main>
+<div class="foot">Fonte: camada “Ferrovias / Terminais – Autorizatárias” (ArcGIS Online). Consulta ao vivo em <span id="upd">—</span>.</div>
+
+<script>
+const STATUS=[
+  // cores originais do painel/web map
+  ['Contrato Celebrado','#28AD21'],
+  ['Requerimento em Análise','#FFFA5E'],
+  ['Contrato Extinto','#C71A1A'],
+  ['Requerimento Arquivado','#F27979'],
+  ['Requerimento Indeferido','#FFB05C']];
+const SCOL=Object.fromEntries(STATUS);
+const REGIOES=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'];
+const RNOME=r=>r;
+let D=[], UFS=[], UFREG={}, UFNOME={};
+
+const nf=(v,d=0)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sum=(a,k)=>a.reduce((s,r)=>s+(+r[k]||0),0);
+const S={regiao:null,uf:null,status:null,req:null};
+let reqMetric='n', reqAll=false, sortK='km', sortDir=-1;
+
+function pass(r,skip){
+  return (skip==='regiao'||!S.regiao||r.regiao===S.regiao)
+      && (skip==='uf'||!S.uf||r.uf===S.uf)
+      && (skip==='status'||!S.status||r.status===S.status)
+      && (skip==='req'||!S.req||r.req===S.req);
+}
+const rows=skip=>D.filter(r=>pass(r,skip));
+function set(k,v){ S[k]=(S[k]===v?null:v); if(k==='regiao'&&S.uf&&S.regiao&&UFREG[S.uf]!==S.regiao) S.uf=null; render(); }
+
+/* ---------- Ícones ---------- */
+const IC={
+  km:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="13" rx="3"/><path d="M6 9.5h12M9.5 5.5h5"/><circle cx="9" cy="12.5" r=".9" fill="currentColor"/><circle cx="15" cy="12.5" r=".9" fill="currentColor"/><path d="M9 15.5 6.5 21.5M15 15.5l2.5 6M7.6 19h8.8"/></svg>',
+  inv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19h16M6 16v-4M10 16V9M14 16v-6M18 16V6"/></svg>',
+  ed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15.5h16M5.5 15.5a6.5 6.5 0 0 1 13 0"/><path d="M10 9.3V7.2h4v2.1M12 9v6.5"/><path d="M6 15.5v2.2c0 .9.7 1.6 1.6 1.6h8.8c.9 0 1.6-.7 1.6-1.6v-2.2"/></svg>',
+  ei:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6S13.9 16 14.5 19M15 14.6c2.6 0 4.7 1.4 5.3 4.4"/></svg>',
+  tr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5c-1.9 0-3-1.4-3-3a3 3 0 0 1 6 0c0 1.6-1.1 3-3 3Zm0 0V9"/><circle cx="6" cy="5.5" r=".8" fill="currentColor"/><path d="M18 21c-1.9 0-3-1.4-3-3a3 3 0 0 1 6 0c0 1.6-1.1 3-3 3Z"/><circle cx="18" cy="18" r=".8" fill="currentColor"/><path d="M6 11.5c0 2 1.5 3 3.5 3h5c2 0 3-1.5 3-3s-1-3-3-3H11" stroke-dasharray="2 2.2"/></svg>'
+};
+
+/* ---------- Filtros ---------- */
+function renderFilters(){
+  const base=rows('regiao');
+  const el=document.getElementById('fRegiao');
+  el.innerHTML=[['Brasil',null,base.length],...REGIOES.map(r=>[RNOME(r),r,base.filter(x=>x.regiao===r).length])]
+    .map(([lb,v,n])=>`<button class="chip ${S.regiao===v?'on':''}" data-r="${v??''}" ${n===0&&v?'disabled':''}>${lb}<span class="n">${n}</span></button>`).join('');
+  el.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const v=b.dataset.r||null; S.regiao=v; if(S.uf&&v&&UFREG[S.uf]!==v)S.uf=null; render();});
+  const sel=document.getElementById('fUF');
+  const ufs=[...new Set(rows('uf').map(r=>r.uf))].filter(u=>!S.regiao||UFREG[u]===S.regiao).sort();
+  sel.innerHTML='<option value="">Todas</option>'+ufs.map(u=>`<option value="${u}" ${S.uf===u?'selected':''}>${u} — ${UFNOME[u]||u}</option>`).join('');
+  sel.onchange=()=>{S.uf=sel.value||null; render();};
+  const act=[];
+  if(S.status) act.push(['status',S.status]);
+  if(S.req) act.push(['req',S.req.length>30?S.req.slice(0,30)+'…':S.req]);
+  if(S.uf) act.push(['uf',S.uf]);
+  const a=document.getElementById('fActive');
+  a.innerHTML=act.map(([k,v])=>`<button class="tag" data-k="${k}">${v}</button>`).join('');
+  a.querySelectorAll('.tag').forEach(b=>b.onclick=()=>{S[b.dataset.k]=null; render();});
+  document.getElementById('fClear').hidden=!(S.regiao||S.uf||S.status||S.req);
+}
+document.getElementById('fClear').onclick=()=>{Object.keys(S).forEach(k=>S[k]=null); render();};
+
+/* ---------- KPIs ---------- */
+function renderKPIs(f){
+  const cel=f.filter(r=>r.status==='Contrato Celebrado');
+  const reqs=new Set(f.map(r=>r.req)).size;
+  const card=(ic,lb,val,unit,celVal,celUnit,note='')=>`<div class="card kpi"><div class="ic">${IC[ic]}</div>
+      <div class="lb">${lb}</div>
+      <div class="vl">${val}<small>${unit}</small>${note?`<span class="note">${note}</span>`:''}</div>
+      <div class="ft"><span class="k">Contratos celebrados</span><b>${celVal}${celUnit?`<small>${celUnit}</small>`:''}</b></div></div>`;
+  document.getElementById('kpis').innerHTML=
+    card('km','Extensão ferroviária',nf(sum(f,'km'),1),'km',nf(sum(cel,'km'),1),'km')+
+    card('inv','Previsão de investimento',nf(sum(f,'inv'),1),'R$ bi',nf(sum(cel,'inv'),1),'R$ bi')+
+    card('ed','Empregos diretos',nf(sum(f,'ed')),'',nf(sum(cel,'ed')),'')+
+    card('ei','Empregos indiretos',nf(sum(f,'ei')),'',nf(sum(cel,'ei')),'')+
+    card('tr','Trechos',nf(f.length),'',nf(cel.length),'',`${reqs} requerentes`);
+}
+
+/* ---------- Status (rosca) ---------- */
+const cStatus=echarts.init(document.getElementById('cStatus'));
+function renderStatus(){
+  const f=rows('status'); const tot=f.length;
+  const data=STATUS.map(([s,c])=>({name:s,value:f.filter(r=>r.status===s).length,itemStyle:{color:c,opacity:!S.status||S.status===s?1:.25}}));
+  cStatus.setOption({
+    tooltip:{trigger:'item',formatter:p=>`<b>${p.name}</b><br>${p.value} trechos · ${nf(p.percent,1)}%`},
+    series:[{type:'pie',radius:['58%','84%'],center:['50%','52%'],padAngle:1.5,itemStyle:{borderColor:'#fff',borderWidth:2,borderRadius:3},
+      label:{show:true,position:'center',formatter:()=>`{v|${S.status?data.find(d=>d.name===S.status).value:tot}}\n{l|${S.status?'selecionados':'trechos'}}`,
+        rich:{v:{fontSize:26,fontWeight:700,color:'#14213D',lineHeight:30},l:{fontSize:12,color:'#6A7486'}}},
+      emphasis:{scale:true,scaleSize:4,label:{show:true}},labelLine:{show:false},data}]
+  },true);
+  document.getElementById('lgStatus').innerHTML=data.map(d=>`<button class="lg ${S.status&&S.status!==d.name?'off':''}" data-s="${d.name}">
+    <i class="dot" style="background:${SCOL[d.name]}"></i><span>${d.name}</span><span class="c">${d.value}</span><span class="p">${tot?nf(d.value/tot*100,1):0}%</span></button>`).join('');
+  document.querySelectorAll('#lgStatus .lg').forEach(b=>b.onclick=()=>set('status',b.dataset.s));
+}
+cStatus.on('click',p=>set('status',p.name));
+
+/* ---------- Regiões ---------- */
+function renderRegioes(){
+  const f=rows('regiao');
+  const vals=REGIOES.map(r=>[r,sum(f.filter(x=>x.regiao===r),'km')]);
+  const mx=Math.max(1,...vals.map(v=>v[1]));
+  const el=document.getElementById('regBars');
+  el.innerHTML=vals.map(([r,v])=>`<button class="rg ${S.regiao===r?'on':''} ${S.regiao&&S.regiao!==r?'dim':''}" data-r="${r}" title="${RNOME(r)}: ${nf(v,1)} km">
+    <span>${RNOME(r)}</span><span class="bar"><i style="width:${v/mx*100}%"></i></span><span class="v">${nf(v,0)}</span></button>`).join('');
+  el.querySelectorAll('.rg').forEach(b=>b.onclick=()=>set('regiao',b.dataset.r));
+}
+
+/* ---------- Requerentes (barras horizontais empilhadas) ---------- */
+const cReq=echarts.init(document.getElementById('cReq'));
+const short=s=>s.replace(/ (S\.?A\.?|Ltda\.?|LTDA)\.?$/i,'').replace(/ - .*/,'');
+function renderReq(){
+  const f=rows('req');
+  const val=r=>reqMetric==='n'?1:r[reqMetric];
+  const by={};
+  f.forEach(r=>{(by[r.req]??={tot:0,s:{}}); by[r.req].tot+=val(r); by[r.req].s[r.status]=(by[r.req].s[r.status]||0)+val(r);});
+  let list=Object.entries(by).sort((a,b)=>b[1].tot-a[1].tot||a[0].localeCompare(b[0],'pt-BR'));
+  const fmt=v=>reqMetric==='inv'?nf(v,1):reqMetric==='km'?nf(v,0):nf(v);
+  const N=12, total=list.length;
+  let restInfo='';
+  if(!reqAll && list.length>N+1){
+    const rest=list.slice(N);
+    restInfo=`+ ${rest.length} requerentes (${fmt(rest.reduce((s,[,o])=>s+o.tot,0))} no total)`;
+    list=list.slice(0,N);
+  }
+  list.reverse();
+  const cats=list.map(x=>x[0]);
+  const series=STATUS.map(([s,c])=>({name:s,type:'bar',stack:'t',barMaxWidth:16,
+    itemStyle:{color:c,borderColor:'#fff',borderWidth:1},
+    emphasis:{focus:'series'},
+    data:list.map(([n,o])=>({value:o.s[s]||0,itemStyle:{opacity:!S.req||S.req===n?1:.3}}))}));
+  series.push({name:'_tot',type:'bar',stack:'t',data:list.map(()=>0),silent:true,itemStyle:{color:'transparent'},
+    label:{show:true,position:'right',color:'#4A5568',fontSize:11,formatter:p=>fmt(list[p.dataIndex][1].tot)},tooltip:{show:false}});
+  const h=Math.max(470,list.length*30+40);
+  document.getElementById('cReq').style.height=h+'px'; cReq.resize();
+  cReq.setOption({
+    grid:{left:8,right:44,top:6,bottom:6,containLabel:true},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow',shadowStyle:{color:'rgba(28,95,173,.06)'}},
+      formatter:ps=>{const n=ps[0].axisValue,o=by[n]||list.find(x=>x[0]===n)[1];
+        return `<b>${n}</b><br>`+STATUS.filter(([s])=>o.s[s]).map(([s,c])=>`<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${c};margin-right:6px"></span>${s}: <b>${fmt(o.s[s])}</b>`).join('<br>')+`<br><span style="color:#6A7486">Total: ${fmt(o.tot)}</span>`;}},
+    xAxis:{type:'value',splitLine:{lineStyle:{color:'#EDF0F4'}},axisLabel:{color:'#6A7486',fontSize:11}},
+    yAxis:{type:'category',data:cats,axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE3EB'}},
+      axisLabel:{color:'#14213D',fontSize:12,width:170,overflow:'truncate',formatter:short}},
+    series
+  },true);
+  const unit={n:'nº de trechos',km:'extensão em km',inv:'previsão de investimento (R$ bi)'}[reqMetric];
+  document.getElementById('reqHint').textContent=`Ordenado por ${unit} · cores = situação`;
+  const more=document.getElementById('reqMore');
+  more.hidden=total<=N+1; more.textContent=reqAll?'Mostrar apenas os 12 maiores':`${restInfo} · ver todos →`;
+}
+cReq.on('click',p=>set('req',p.name));
+document.getElementById('reqMore').onclick=()=>{reqAll=!reqAll;renderReq();};
+document.querySelectorAll('#reqMetric button').forEach(b=>b.onclick=()=>{
+  reqMetric=b.dataset.m; document.querySelectorAll('#reqMetric button').forEach(x=>x.classList.toggle('on',x===b)); renderReq();});
+
+/* ---------- Investimento por UF ---------- */
+const cUF=echarts.init(document.getElementById('cUF'));
+function renderUF(){
+  const f=rows('uf');
+  const by={}; f.forEach(r=>by[r.uf]=(by[r.uf]||0)+r.inv);
+  const list=Object.entries(by).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  cUF.setOption({
+    grid:{left:8,right:12,top:22,bottom:4,containLabel:true},
+    tooltip:{trigger:'item',formatter:p=>`<b>${UFNOME[p.name]||p.name}</b> (${RNOME(UFREG[p.name]||'')})<br>R$ ${nf(p.value,2)} bi`},
+    xAxis:{type:'category',data:list.map(x=>x[0]),axisTick:{show:false},axisLine:{lineStyle:{color:'#DDE3EB'}},axisLabel:{color:'#14213D',fontSize:12,interval:0}},
+    yAxis:{type:'value',splitLine:{lineStyle:{color:'#EDF0F4'}},axisLabel:{color:'#6A7486',fontSize:11}},
+    series:[{type:'bar',barMaxWidth:28,data:list.map(([u,v])=>({value:+v.toFixed(2),
+      itemStyle:{color:S.uf===u?'#0A2A5E':'#1C5FAD',opacity:!S.uf||S.uf===u?1:.3,borderRadius:[4,4,0,0]}})),
+      label:{show:true,position:'top',color:'#4A5568',fontSize:11,formatter:p=>nf(p.value,1)}}]
+  },true);
+}
+cUF.on('click',p=>set('uf',p.name));
+
+/* ---------- Tabela ---------- */
+function renderTable(f){
+  const q=document.getElementById('tblSearch').value.trim().toLowerCase();
+  let t=f.filter(r=>!q||(r.trecho+' '+r.req).toLowerCase().includes(q));
+  t.sort((a,b)=>{const x=a[sortK],y=b[sortK];return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'pt-BR'))*sortDir;});
+  document.querySelector('#tbl tbody').innerHTML=t.map(r=>`<tr><td>${r.trecho}</td><td>${r.req}</td><td>${r.uf}</td>
+    <td><span class="st"><i style="background:${SCOL[r.status]||'#999'}"></i>${r.status}</span></td>
+    <td class="num">${nf(r.km,1)}</td><td class="num">${nf(r.inv,2)}</td></tr>`).join('');
+  document.getElementById('tblCount').textContent=`${t.length} de ${D.length}`;
+  document.querySelectorAll('#tbl th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k===sortK?(sortDir>0?'ascending':'descending'):'none'));
+}
+document.querySelectorAll('#tbl th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; if(sortK===k)sortDir*=-1; else {sortK=k;sortDir=(k==='km'||k==='inv')?-1:1;} renderTable(rows());});
+document.getElementById('tblSearch').oninput=()=>renderTable(rows());
+
+/* ---------- Mapa (ArcGIS Maps SDK) ---------- */
+const SVC='https://services.arcgis.com/4CZwpdWHGNPLU7QQ/arcgis/rest/services/AUT___AP___20_02_26/FeatureServer/0';
+const UFSVC='https://services.arcgis.com/4CZwpdWHGNPLU7QQ/arcgis/rest/services/UF/FeatureServer/0';
+const BASEMAPS={lgray:'gray-vector',dgray:'dark-gray-vector',streets:'streets-vector',topo:'topo-vector',img:'hybrid',osm:'osm'};
+let view=null, lyr={}, BRext=null, lastKey=null;
+const q=s=>"'"+String(s).replace(/'/g,"''")+"'";
+function whereAut(){
+  const c=[];
+  if(S.regiao) c.push('REGIAO='+q(S.regiao));
+  if(S.uf) c.push('UF='+q(S.uf));
+  if(S.status) c.push('STATUS='+q(S.status));
+  if(S.req) c.push('REQUERENTE='+q(S.req));
+  return c.length?c.join(' AND '):'1=1';
+}
+const ufReg=r=>r==='Centro-Oeste'?"NM_REGIAO IN ('Centro-Oeste','Centro-oeste')":'NM_REGIAO='+q(r);
+
+function initMap(){ return new Promise(res=>{
+  require(['esri/Map','esri/views/MapView','esri/layers/FeatureLayer'],(EMap,MapView,FeatureLayer)=>{
+    const line=(c,w)=>({type:'simple-line',color:c,width:w,cap:'round',join:'round'});
+    lyr.uf=new FeatureLayer({url:UFSVC,outFields:['SIGLA_UF','NM_UF','NM_REGIAO'],popupEnabled:false,
+      renderer:{type:'simple',symbol:{type:'simple-fill',color:[0,0,0,0],outline:{color:[255,255,255,.55],width:.7}}}});
+    lyr.hl=new FeatureLayer({url:UFSVC,popupEnabled:false,definitionExpression:'1=0',
+      renderer:{type:'simple',symbol:{type:'simple-fill',color:[28,95,173,.18],outline:{color:[242,183,5,1],width:2}}}});
+    lyr.casing=new FeatureLayer({url:SVC,popupEnabled:false,renderer:{type:'simple',symbol:line([20,33,61,.6],5.5)}});
+    lyr.aut=new FeatureLayer({url:SVC,outFields:['TRECHO','REQUERENTE','STATUS','UF','EXTENSÃO','PREV_INVEST'],
+      renderer:{type:'unique-value',field:'STATUS',defaultSymbol:line('#999',3),
+        uniqueValueInfos:STATUS.map(([s,c])=>({value:s,symbol:line(c,3)}))},
+      popupTemplate:{title:'{TRECHO}',content:[{type:'fields',fieldInfos:[
+        {fieldName:'REQUERENTE',label:'Requerente'},{fieldName:'STATUS',label:'Situação'},{fieldName:'UF',label:'UF'},
+        {fieldName:'EXTENSÃO',label:'Extensão (km)',format:{digitSeparator:true,places:1}},
+        {fieldName:'PREV_INVEST',label:'Investimento (R$ bi)',format:{digitSeparator:true,places:2}}]}]}});
+    const sel=document.getElementById('baseSel');
+    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr.uf,lyr.hl,lyr.casing,lyr.aut]});
+    view=new MapView({container:'map',map:m,center:[-52,-14.5],zoom:4,constraints:{snapToZoom:false},
+      ui:{components:['zoom','attribution']},popup:{dockEnabled:false}});
+    view.navigation.mouseWheelZoomEnabled=false;
+    const lg=document.createElement('div'); lg.className='mlegend';
+    lg.innerHTML=STATUS.map(([s,c])=>`<div><i style="background:${c}"></i>${s}</div>`).join('');
+    view.ui.add(lg,'bottom-left');
+    view.on('click',async e=>{
+      view.navigation.mouseWheelZoomEnabled=true;
+      const h=await view.hitTest(e,{include:[lyr.aut,lyr.uf]});
+      if(h.results.some(r=>r.graphic&&r.graphic.layer===lyr.aut)) return;
+      const u=h.results.find(r=>r.graphic&&r.graphic.layer===lyr.uf);
+      if(u){ e.stopPropagation(); set('uf',u.graphic.attributes.SIGLA_UF); }
+    });
+    view.on('pointer-leave',()=>{ view.navigation.mouseWheelZoomEnabled=false; });
+    sel.onchange=e=>{ m.basemap=BASEMAPS[e.target.value]; };
+    view.when(async()=>{
+      try{ BRext=(await lyr.uf.queryExtent()).extent; await view.goTo(BRext.clone().expand(1.02),{animate:false}); }catch(_){}
+      res();
+    });
+  });
+}); }
+
+async function renderMap(){
+  if(!view) return;
+  const w=whereAut();
+  lyr.aut.definitionExpression=w; lyr.casing.definitionExpression=w;
+  lyr.hl.definitionExpression=S.uf?'SIGLA_UF='+q(S.uf):S.regiao?ufReg(S.regiao):'1=0';
+  const key=[S.regiao,S.uf,S.status,S.req].join('|');
+  if(key===lastKey) return; lastKey=key;
+  try{
+    let ext=null;
+    if(S.uf) ext=(await lyr.uf.queryExtent({where:'SIGLA_UF='+q(S.uf)})).extent;
+    else if(S.regiao) ext=(await lyr.uf.queryExtent({where:ufReg(S.regiao)})).extent;
+    else if(S.req||S.status) ext=(await lyr.aut.queryExtent({where:w})).extent;
+    else ext=BRext;
+    if(ext) view.goTo(ext.clone().expand(1.15),{duration:600}).catch(()=>{});
+  }catch(_){}
+}
+
+/* ---------- Dados ao vivo ---------- */
+async function loadData(){
+  const fields=encodeURIComponent('FID,TRECHO,REQUERENTE,STATUS,UF,REGIAO,EXTENSÃO,PREV_INVEST,EMP_DIRETO,EMP_INDIRE');
+  const a=await (await fetch(`${SVC}/query?where=1%3D1&outFields=${fields}&returnGeometry=false&f=json`)).json();
+  if(a.error) throw new Error(a.error.message||'erro na consulta');
+  D=a.features.map(({attributes:p})=>({id:p.FID,trecho:p.TRECHO||'',req:(p.REQUERENTE||'').trim(),status:p.STATUS||'',
+    uf:p.UF||'',regiao:p.REGIAO||'',km:p['EXTENSÃO']||0,inv:p.PREV_INVEST||0,ed:p.EMP_DIRETO||0,ei:p.EMP_INDIRE||0}));
+  const u=await (await fetch(`${UFSVC}/query?where=1%3D1&outFields=SIGLA_UF,NM_UF,NM_REGIAO&returnGeometry=false&f=json`)).json();
+  UFS=(u.features||[]).map(({attributes:x})=>({uf:x.SIGLA_UF,nome:x.NM_UF,regiao:x.NM_REGIAO==='Centro-oeste'?'Centro-Oeste':x.NM_REGIAO}));
+  UFREG=Object.fromEntries(UFS.map(x=>[x.uf,x.regiao])); UFNOME=Object.fromEntries(UFS.map(x=>[x.uf,x.nome]));
+}
+
+/* ---------- Render ---------- */
+function render(){
+  const f=rows();
+  renderFilters(); renderKPIs(f); renderStatus(); renderRegioes(); renderReq(); renderUF(); renderTable(f); renderMap();
+}
+(async()=>{
+  try{ await loadData(); }
+  catch(e){ document.getElementById('loading').textContent='Não foi possível carregar os dados da camada: '+e.message; return; }
+  document.getElementById('loading').remove();
+  document.getElementById('upd').textContent=new Date().toLocaleString('pt-BR');
+  render();
+  await initMap(); lastKey=null; renderMap();
+})();
+window.addEventListener('resize',()=>{cStatus.resize();cReq.resize();cUF.resize();});
+</script>
+</body>
+</html>
