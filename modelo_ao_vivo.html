@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 <script src="https://js.arcgis.com/4.30/"></script>
+<script src="https://alipiuspaulo.github.io/saffp-paineis/assets/legenda.js?v=1"></script>
 <style>
 :root{
   --navy:#0A2A5E; --blue:#1C5FAD; --blue-soft:#DCE7F5; --yellow:#F2B705;
@@ -550,7 +551,7 @@ function initMap(){ return new Promise(res=>{
     view.navigation.mouseWheelZoomEnabled=false;
     const lg=document.createElement('div'); lg.className='mlegend';
     lg.innerHTML='<div class="t">Situação do trecho</div>'+STATUS.map(([s,c])=>`<div><i style="background:${c}"></i>${s}</div>`).join('')+'<div class="hint" style="margin-top:2px">Clique no trecho para a ficha completa</div>';
-    view.ui.add(lg,'bottom-left');
+    view.ui.add(legendToggle(lg,{maxHeight:'40vh'}),'bottom-left');
     const home=new Home({view}); view.ui.add(home,'top-left');
     view.ui.add(new Expand({view,content:new LayerList({view}),expandIcon:'layers',expandTooltip:'Camadas do mapa',expanded:false}),'top-right');
     view.on('click',async e=>{
@@ -835,7 +836,7 @@ function initMap2(){ return new Promise(res=>{
     view2.navigation.mouseWheelZoomEnabled=false;
     const home=new Home({view:view2}); view2.ui.add(home,'top-left');
     view2.ui.add(new Expand({view:view2,content:new LayerList({view:view2}),expandIcon:'layers',expandTooltip:'Camadas do mapa',expanded:false}),'top-right');
-    view2.ui.add(legendFed(),'bottom-left');
+    view2.ui.add(legendToggle(legendFed(),{maxHeight:'40vh'}),'bottom-left');
     sel.onchange=e=>{ m.basemap=BASEMAPS[e.target.value]; };
     const clr=document.createElement('button'); clr.className='clrsel'; clr.id='clrSel'; clr.hidden=true; clr.innerHTML='✕ Limpar seleção'; clr.onclick=()=>clearSel(true);
     view2.ui.add(clr,'top-right');
