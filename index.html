@@ -127,6 +127,13 @@ tr:hover td{background:#F7F9FC}
 .tab.on{background:#0A2A5E;border-color:#0A2A5E;color:#fff;box-shadow:inset 0 -4px 0 #F2B705,0 4px 12px rgba(10,42,94,.22)}
 .tab:focus-visible{outline:3px solid #F2B705;outline-offset:2px}
 [hidden]{display:none!important}
+.clrsel{border:0;background:#0A2A5E;color:#fff;font:600 13px "Segoe UI",system-ui,sans-serif;padding:8px 12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer}
+.clrsel:hover{background:#1C5FAD}
+.dlinks{display:grid;gap:6px}
+.dlink{display:grid;gap:2px;padding:9px 12px;border:1px solid #C9D6EC;border-radius:8px;background:#F4F7FC;text-decoration:none;color:#0A2A5E}
+.dlink:hover{border-color:#1C5FAD;background:#EAF1FB}
+.dlink b{font-size:13px}.dlink b::after{content:" ↗"}
+.dlink span{font-size:11.5px;color:#4A5568;word-break:break-all}
 
 /* Ficha do trecho (janela lateral fora do mapa) */
 .drawer-bg{position:fixed;inset:0;background:rgba(6,18,42,.35);z-index:4000;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -532,13 +539,12 @@ function initMap(){ return new Promise(res=>{
       renderer:{type:'simple',symbol:{type:'simple-fill',color:[0,0,0,0],outline:{color:[255,255,255,.55],width:.7}}}});
     lyr.hl=new FeatureLayer({url:UFSVC,listMode:'hide',popupEnabled:false,definitionExpression:'1=0',
       renderer:{type:'simple',symbol:{type:'simple-fill',color:[28,95,173,.18],outline:{color:[242,183,5,1],width:2}}}});
-    lyr.casing=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,renderer:{type:'simple',symbol:line([20,33,61,.6],5.5)}});
     lyr.aut=new FeatureLayer({url:SVC,title:'Trechos autorizados (situação)',outFields:['FID','TRECHO','REQUERENTE','STATUS'],popupEnabled:false,
       renderer:{type:'unique-value',field:'STATUS',defaultSymbol:line('#999',3),
         uniqueValueInfos:STATUS.map(([s,c])=>({value:s,label:s,symbol:line(c,3)}))}});
     lyr.fed=new FeatureLayer({url:FEDSVC,title:'Malha ferroviária federal',visible:false,minScale:0,outFields:['SIGLA_COIN','LABEL','TIP_SITUAC','SIGLA','BITOLA','ESTUDOS'],renderer:fedRenderer(),popupTemplate:fedPopup});
     const sel=document.getElementById('baseSel');
-    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr.uf,lyr.hl,lyr.fed,lyr.casing,lyr.aut]});
+    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr.uf,lyr.hl,lyr.fed,lyr.aut]});
     view=new MapView({container:'map',map:m,center:[-52,-14.5],zoom:4,constraints:{snapToZoom:false},
       ui:{components:['zoom','attribution']},popup:{dockEnabled:false}});
     view.navigation.mouseWheelZoomEnabled=false;
@@ -568,7 +574,7 @@ function initMap(){ return new Promise(res=>{
 async function renderMap(){
   if(!view) return;
   const w=whereAut();
-  lyr.aut.definitionExpression=w; lyr.casing.definitionExpression=w;
+  lyr.aut.definitionExpression=w;
   lyr.hl.definitionExpression=S.uf?'SIGLA_UF='+q(S.uf):S.regiao?ufReg(S.regiao):'1=0';
   const key=[S.regiao,S.uf,S.status,S.req].join('|');
   if(key===lastKey) return; lastKey=key;
@@ -613,7 +619,7 @@ const fedRenderer=()=>({type:'unique-value',field:'TIP_SITUAC',defaultSymbol:fed
 const fedPopup={title:'{LABEL}',content:[{type:'fields',fieldInfos:[{fieldName:'SIGLA_COIN',label:'Ferrovia'},{fieldName:'SIGLA',label:'Sigla (EF)'},{fieldName:'TIP_SITUAC',label:'Situação'},{fieldName:'BITOLA',label:'Bitola'},{fieldName:'ESTUDOS',label:'Estudos'}]}]};
 const legendFed=()=>{ const d=document.createElement('div'); d.className='mlegend';
   d.innerHTML='<div class="t">Malha federal (situação)</div>'+FEDSIT.map(([s,c,st])=>`<div><i style="background:${st==='solid'?c:`repeating-linear-gradient(90deg,${c} 0 4px,transparent 4px 7px)`}"></i>${s}</div>`).join('')+
-    '<div class="t" style="margin-top:4px">Autorizações</div><div><i style="background:#C2410C;height:5px"></i>Trecho autorizado</div><div><i style="background:#F2B705;width:10px;height:10px;border-radius:50%;border:2px solid #14213D"></i>Ponto de conexão</div>';
+    '<div class="t" style="margin-top:4px">Trechos autorizados (situação)</div>'+STATUS.map(([s,c])=>`<div><i style="background:${c};height:5px"></i>${s}</div>`).join('')+'<div><i style="background:#F2B705;width:10px;height:10px;border-radius:50%;border:2px solid #14213D"></i>Ponto de conexão</div>';
   return d; };
 
 /* ---------- Geometrias e análise de conexão ---------- */
@@ -678,14 +684,22 @@ const drawer=document.getElementById('ficha'), drBg=document.getElementById('drB
 const closeFicha=()=>{ drawer.classList.remove('on'); drBg.classList.remove('on'); };
 document.getElementById('frClose').onclick=closeFicha; drBg.onclick=closeFicha;
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&drawer.classList.contains('on')) closeFicha(); });
+const URLRX=/(https?:\/\/[^\s<>"']+)/g;
+const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const linkLabel=u=>{ try{ const x=new URL(u); return x.hostname.replace(/^www\./,'')+(x.pathname.length>1?' / …':''); }catch(e){ return u; } };
+const linkify=v=>escH(v).replace(/(https?:\/\/[^\s<>"]+)/g,u=>{ const raw=u.replace(/&amp;/g,'&'); return `<a href="${escH(raw)}" target="_blank" rel="noopener" title="${escH(raw)}">${escH(linkLabel(raw))} ↗</a>`; });
+function fichaLinks(a){
+  const L=[]; const lab={CONTRATO:'Contrato de adesão',OBS:'Ato / documento citado nas observações',EXTRATO:'Extrato',DEL_ANTT:'Deliberação ANTT'};
+  Object.entries(a).forEach(([k,v])=>{ if(typeof v!=='string') return; (v.match(URLRX)||[]).forEach(u=>L.push([lab[k]||k,u])); });
+  return L;
+}
 function fmtAttr(k,v){
   if(v==null||v==='') return '<span style="color:#9AA4B2">—</span>';
   const t=FTYPES&&FTYPES[k];
   if(t==='esriFieldTypeDate') return new Date(v).toLocaleDateString('pt-BR',{timeZone:'UTC'});
   if(t==='esriFieldTypeDateOnly'){ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(v); return m?`${m[3]}/${m[2]}/${m[1]}`:v; }
   if(typeof v==='number') return k==='PREV_INVEST'?nf(v,2):k==='EXTENSÃO'?nf(v,1):nf(v);
-  if(/^https?:\/\//.test(v)) return `<a href="${v}" target="_blank" rel="noopener">Abrir documento ↗</a>`;
-  return String(v).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  return linkify(v);
 }
 async function openFicha(fid){
   drawer.classList.add('on'); drBg.classList.add('on');
@@ -696,7 +710,9 @@ async function openFicha(fid){
   document.getElementById('frTitle').textContent=a.TRECHO||'Trecho';
   document.getElementById('frSub').innerHTML=`<span class="st" style="color:#fff"><i style="background:${SCOL[a.STATUS]||'#999'}"></i>${a.STATUS||''}</span>`;
   const used=new Set(['FID','Shape__Length']);
-  let h=FICHA.map(([sec,fs])=>{ fs.forEach(([k])=>used.add(k)); return `<div class="dr-sec">${sec}</div><table class="attr">${fs.map(([k,l])=>`<tr><th>${l}</th><td>${fmtAttr(k,a[k])}</td></tr>`).join('')}</table>`; }).join('');
+  const links=fichaLinks(a);
+  let h=links.length?`<div class="dr-sec">Documentos e links</div><div class="dlinks">${links.map(([l,u])=>`<a class="dlink" href="${escH(u)}" target="_blank" rel="noopener" title="${escH(u)}"><b>${escH(l)}</b><span>${escH(u)}</span></a>`).join('')}</div>`:'';
+  h+=FICHA.map(([sec,fs])=>{ fs.forEach(([k])=>used.add(k)); return `<div class="dr-sec">${sec}</div><table class="attr">${fs.map(([k,l])=>`<tr><th>${l}</th><td>${fmtAttr(k,a[k])}</td></tr>`).join('')}</table>`; }).join('');
   const rest=Object.keys(a).filter(k=>!used.has(k));
   if(rest.length) h+=`<div class="dr-sec">Outros atributos</div><table class="attr">${rest.map(k=>`<tr><th>${k}</th><td>${fmtAttr(k,a[k])}</td></tr>`).join('')}</table>`;
   h+=`<div class="dr-sec">Conexão com a malha federal</div><div id="frConn" class="hint">Analisando…</div>`;
@@ -771,12 +787,19 @@ function selectReq(req){
     <div class="dr-sec">Trechos</div><div class="tl">${g.tr.sort((a,b)=>b.km-a.km).map(r=>`<button data-f="${r.id}"><i style="background:${SCOL[r.status]||'#999'}"></i><span>${r.trecho}</span><span class="hint">${nf(r.km,0)} km ›</span></button>`).join('')}</div>
     <div class="note2" style="padding:10px 0 0">Clique em um trecho para abrir a ficha completa.</div>`;
   document.getElementById('sideList').hidden=true; p.hidden=false; p.scrollTop=0;
-  document.getElementById('dpBack').onclick=()=>{ detSel=null; p.hidden=true; document.getElementById('sideList').hidden=false; drawSel(); };
+  document.getElementById('dpBack').onclick=()=>clearSel(true);
   p.querySelectorAll('.tl button').forEach(b=>b.onclick=()=>openFicha(+b.dataset.f));
   drawSel();
 }
+function clearSel(refit){
+  detSel=null; document.getElementById('detPanel').hidden=true; document.getElementById('sideList').hidden=false;
+  if(view2){ view2.closePopup&&view2.closePopup(); }
+  drawSel(); if(refit&&view2&&view2.__home) view2.goTo(view2.__home,{duration:600}).catch(()=>{});
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&detSel&&TAB==='det'&&!drawer.classList.contains('on')) clearSel(true); });
 function drawSel(){
   if(!view2) return;
+  const cb=document.getElementById('clrSel'); if(cb) cb.hidden=!detSel;
   const ids=detSel?D.filter(r=>r.req===detSel).map(r=>r.id):[];
   lyr2.sel.definitionExpression=ids.length?`FID IN (${ids.join(',')})`:'1=0';
   lyr2.pts.removeAll();
@@ -792,7 +815,7 @@ async function renderDet(refit){
   if(lyr2.fed) lyr2.fed.definitionExpression=sitWhere();
   FEDKM=FED.filter(f=>(!DS.fer||f.code===DS.fer)&&(!DS.sit||f.sit===DS.sit)).reduce((s,f)=>s+f.km,0);
   const ids=trechosDet().map(r=>r.id);
-  if(lyr2.aut){ const w=(DS.fer||DS.sit)?(ids.length?`FID IN (${ids.join(',')})`:'1=0'):'1=1'; lyr2.aut.definitionExpression=w; lyr2.casing.definitionExpression=w; }
+  if(lyr2.aut){ const w=(DS.fer||DS.sit)?(ids.length?`FID IN (${ids.join(',')})`:'1=0'):'1=1'; lyr2.aut.definitionExpression=w; }
   renderDetKPIs(); renderAIList(); drawSel();
   if(refit&&view2&&!detSel){ try{ const e=(DS.fer||DS.sit)?(await lyr2.fed.queryExtent({where:sitWhere()})).extent:null; view2.goTo(e?e.clone().expand(1.2):view2.__home,{duration:600}).catch(()=>{}); }catch(_){} }
 }
@@ -802,21 +825,25 @@ function initMap2(){ return new Promise(res=>{
     const line=(c,w)=>({type:'simple-line',color:c,width:w,cap:'round',join:'round'});
     lyr2.uf=new FeatureLayer({url:UFSVC,title:'Limites estaduais',popupEnabled:false,renderer:{type:'simple',symbol:{type:'simple-fill',color:[0,0,0,0],outline:{color:[110,120,140,.45],width:.6}}}});
     lyr2.fed=new FeatureLayer({url:FEDSVC,title:'Malha ferroviária federal (situação)',minScale:0,outFields:['SIGLA_COIN','LABEL','TIP_SITUAC','SIGLA','BITOLA','ESTUDOS'],renderer:fedRenderer(),popupTemplate:fedPopup});
-    lyr2.casing=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,renderer:{type:'simple',symbol:line([255,255,255,.95],6)}});
-    lyr2.aut=new FeatureLayer({url:SVC,title:'Trechos autorizados',outFields:['FID','REQUERENTE'],popupEnabled:false,renderer:{type:'simple',symbol:line('#C2410C',3.2)}});
-    lyr2.sel=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,definitionExpression:'1=0',renderer:{type:'simple',symbol:line([242,183,5,.9],9)}});
+    lyr2.aut=new FeatureLayer({url:SVC,title:'Trechos autorizados (situação)',outFields:['FID','REQUERENTE','STATUS'],popupEnabled:false,
+      renderer:{type:'unique-value',field:'STATUS',defaultSymbol:line('#999',3.2),uniqueValueInfos:STATUS.map(([s,c])=>({value:s,label:s,symbol:line(c,3.4)}))}});
+    lyr2.sel=new FeatureLayer({url:SVC,listMode:'hide',popupEnabled:false,definitionExpression:'1=0',renderer:{type:'simple',symbol:line([10,42,94,.55],8)}});
     lyr2.pts=new GraphicsLayer({title:'Pontos de conexão'});
     const sel=document.getElementById('baseSel2');
-    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr2.uf,lyr2.fed,lyr2.sel,lyr2.casing,lyr2.aut,lyr2.pts]});
+    const m=new EMap({basemap:BASEMAPS[sel.value],layers:[lyr2.uf,lyr2.fed,lyr2.sel,lyr2.aut,lyr2.pts]});
     view2=new MapView({container:'map2',map:m,center:[-52,-14.5],zoom:4,constraints:{snapToZoom:false},ui:{components:['zoom','attribution']},popup:{dockEnabled:false}});
     view2.navigation.mouseWheelZoomEnabled=false;
     const home=new Home({view:view2}); view2.ui.add(home,'top-left');
     view2.ui.add(new Expand({view:view2,content:new LayerList({view:view2}),expandIcon:'layers',expandTooltip:'Camadas do mapa',expanded:false}),'top-right');
     view2.ui.add(legendFed(),'bottom-left');
     sel.onchange=e=>{ m.basemap=BASEMAPS[e.target.value]; };
+    const clr=document.createElement('button'); clr.className='clrsel'; clr.id='clrSel'; clr.hidden=true; clr.innerHTML='✕ Limpar seleção'; clr.onclick=()=>clearSel(true);
+    view2.ui.add(clr,'top-right');
     view2.on('click',async e=>{ view2.navigation.mouseWheelZoomEnabled=true;
-      const h=await view2.hitTest(e,{include:[lyr2.aut]}); const g=h.results.find(r=>r.graphic&&r.graphic.layer===lyr2.aut);
-      if(g){ e.stopPropagation(); selectReq((g.graphic.attributes.REQUERENTE||'').trim()); } });
+      const h=await view2.hitTest(e,{include:[lyr2.aut,lyr2.fed,lyr2.pts]});
+      const g=h.results.find(r=>r.graphic&&r.graphic.layer===lyr2.aut);
+      if(g){ e.stopPropagation(); const req=(g.graphic.attributes.REQUERENTE||'').trim(); if(req===detSel) clearSel(true); else selectReq(req); return; }
+      if(!h.results.length&&detSel){ clearSel(false); } });
     view2.on('pointer-leave',()=>{ view2.navigation.mouseWheelZoomEnabled=false; });
     view2.when(async()=>{ try{ const ext=(await lyr2.uf.queryExtent()).extent; await view2.goTo(ext.clone().expand(1.02),{animate:false}); }catch(_){} view2.__home=view2.viewpoint.clone(); home.viewpoint=view2.__home; res(); });
   });
