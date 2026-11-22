@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 <script src="https://js.arcgis.com/4.30/"></script>
 <script src="https://alipiuspaulo.github.io/saffp-paineis/assets/legenda.js?v=1"></script>
+<link rel="stylesheet" href="https://alipiuspaulo.github.io/saffp-paineis/assets/interativo.css?v=5">
 <style>
 :root{
   --navy:#0A2A5E; --blue:#1C5FAD; --blue-soft:#DCE7F5; --yellow:#F2B705;
@@ -591,11 +592,11 @@ async function renderMap(){
 
 /* ---------- Dados ao vivo ---------- */
 async function loadData(){
-  const fields=encodeURIComponent('FID,TRECHO,REQUERENTE,STATUS,UF,REGIAO,EXTENSÃO,PREV_INVEST,EMP_DIRETO,EMP_INDIRE,CARGA,DEM_INICIAL');
+  const fields=encodeURIComponent('FID,TRECHO,REQUERENTE,STATUS,UF,REGIAO,EXTENSÃO,PREV_INVEST,EMP_DIRETO,EMP_INDIRE,CARGA,DEM_INICIAL,PUBLICACAO');
   const a=await (await fetch(`${SVC}/query?where=1%3D1&outFields=${fields}&returnGeometry=false&f=json`)).json();
   if(a.error) throw new Error(a.error.message||'erro na consulta');
   D=a.features.map(({attributes:p})=>({id:p.FID,trecho:p.TRECHO||'',req:(p.REQUERENTE||'').trim(),status:p.STATUS||'',
-    uf:p.UF||'',regiao:p.REGIAO||'',km:p['EXTENSÃO']||0,inv:p.PREV_INVEST||0,ed:p.EMP_DIRETO||0,ei:p.EMP_INDIRE||0,carga:p.CARGA||'',dem:p.DEM_INICIAL||0}));
+    uf:p.UF||'',regiao:p.REGIAO||'',km:p['EXTENSÃO']||0,inv:p.PREV_INVEST||0,ed:p.EMP_DIRETO||0,ei:p.EMP_INDIRE||0,carga:p.CARGA||'',dem:p.DEM_INICIAL||0,pub:p.PUBLICACAO||null}));
   const u=await (await fetch(`${UFSVC}/query?where=1%3D1&outFields=SIGLA_UF,NM_UF,NM_REGIAO&returnGeometry=false&f=json`)).json();
   UFS=(u.features||[]).map(({attributes:x})=>({uf:x.SIGLA_UF,nome:x.NM_UF,regiao:x.NM_REGIAO==='Centro-oeste'?'Centro-Oeste':x.NM_REGIAO}));
   UFREG=Object.fromEntries(UFS.map(x=>[x.uf,x.regiao])); UFNOME=Object.fromEntries(UFS.map(x=>[x.uf,x.nome]));
@@ -882,6 +883,7 @@ function render(){
 })();
 window.addEventListener('resize',()=>{cStatus.resize();cReq.resize();cUF.resize();});
 </script>
+<script src="interativo.js?v=1"></script>
 <script src="https://alipiuspaulo.github.io/saffp-paineis/assets/aviso.js?v=1"></script>
 </body>
 </html>
