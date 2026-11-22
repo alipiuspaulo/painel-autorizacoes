@@ -153,12 +153,12 @@ $('#ixPlay').onclick=play;
 
 /* ---------- ligação gráficos ↔ mapa ---------- */
 let LV=null, hoverW=null;
-function hover(x){ hoverW=x; applyEffect(); }
+function hover(x){ clearTimeout(P.ht); if(x==null){ P.ht=setTimeout(()=>{ hoverW=null; applyEffect(); },140); return; } hoverW=x; applyEffect(); }
 function applyEffect(){
   if(!LV) return;
   const ids=a=>a.length?`FID IN (${a.join(',')})`:'1=0';
-  if(P.play&&P.cur!=null){ LV.featureEffect={filter:{where:ids(D.filter(r=>r._p===P.cur).map(r=>r.id))},includedEffect:'bloom(1.6, 0.6px, 0) drop-shadow(0px, 0px, 6px, #F2B705)',excludedEffect:'opacity(45%)'}; return; }
-  if(hoverW){ LV.featureEffect={filter:{where:Array.isArray(hoverW)?ids(hoverW):hoverW},includedEffect:'bloom(1, 0.5px, 0.1)',excludedEffect:'grayscale(100%) opacity(20%)'}; return; }
+  if(P.play&&P.cur!=null){ LV.featureEffect={filter:{where:ids(D.filter(r=>r._p===P.cur).map(r=>r.id))},includedEffect:'brightness(1.12) drop-shadow(0px 0px 3px rgba(242,183,5,.6))',excludedEffect:'opacity(55%)'}; return; }
+  if(hoverW){ LV.featureEffect={filter:{where:Array.isArray(hoverW)?ids(hoverW):hoverW},includedEffect:'brightness(1.08) drop-shadow(0px 0px 2px rgba(242,183,5,.55))',excludedEffect:'grayscale(65%) opacity(35%)'}; return; }
   LV.featureEffect=null;
 }
 cStatus.on('mouseover',p=>{ if(p.name&&!P.play) hover('STATUS='+q(p.name)); }); cStatus.on('mouseout',()=>hover(null));
@@ -166,6 +166,11 @@ cReq.on('mouseover',p=>{ const n=p.name||(p.componentType==='series'&&cReq.getOp
 cUF.on('mouseover',p=>{ if(p.name&&!P.play) hover('UF='+q(p.name)); }); cUF.on('mouseout',()=>hover(null));
 $('#regBars').addEventListener('mouseover',e=>{ const b=e.target.closest('.rg'); if(b&&!P.play) hover('REGIAO='+q(b.dataset.r)); });
 $('#regBars').addEventListener('mouseleave',()=>hover(null));
+// legenda da situação e linhas da tabela também acendem os trechos no mapa
+$('#lgStatus').addEventListener('mouseover',e=>{ const b=e.target.closest('.lg'); if(b&&!P.play){ hover('STATUS='+q(b.dataset.s)); const si=STATUS.findIndex(s=>s[0]===b.dataset.s); cStatus.dispatchAction({type:'downplay',seriesIndex:0}); if(si>=0) cStatus.dispatchAction({type:'highlight',seriesIndex:0,dataIndex:si}); } });
+$('#lgStatus').addEventListener('mouseleave',()=>{ hover(null); cStatus.dispatchAction({type:'downplay',seriesIndex:0}); });
+$('#tbl tbody').addEventListener('mouseover',e=>{ const tr=e.target.closest('tr[data-f]'); if(!tr||P.play) return; const r=D.find(x=>x.id===+tr.dataset.f); hover([+tr.dataset.f]); chartsHighlight(r); });
+$('#tbl tbody').addEventListener('mouseleave',()=>{ hover(null); chartsHighlight(null); });
 function chartsHighlight(r){
   try{ cStatus.dispatchAction({type:'downplay',seriesIndex:0}); cReq.dispatchAction({type:'downplay'}); cUF.dispatchAction({type:'downplay',seriesIndex:0}); }catch(e){}
   $$('#regBars .rg').forEach(b=>b.classList.toggle('ix-hl',!!r&&b.dataset.r===r.regiao));
@@ -177,6 +182,7 @@ function chartsHighlight(r){
 function moveHov(ev){ const h=$('#ixHov'),m=$('#map'); let x=ev.x+16,y=ev.y+14; if(x+310>view.width) x=ev.x-316; if(y+130>view.height) y=Math.max(4,ev.y-130); h.style.left=(m.offsetLeft+x)+'px'; h.style.top=(m.offsetTop+y)+'px'; }
 function hookMap(lv){
   LV=lv; let last=null,pend=false,hl=null;
+  view.highlightOptions={color:[242,183,5,1],haloOpacity:.6,fillOpacity:.1};
   view.on('pointer-move',ev=>{ if(pend) return; pend=true; requestAnimationFrame(()=>{ pend=false;
     view.hitTest(ev,{include:[lyr.aut]}).then(h=>{ const g=h.results.find(x=>x.graphic&&x.graphic.layer===lyr.aut); const id=g?g.graphic.attributes.FID:null;
       if(id!==last){ last=id; if(hl){hl.remove();hl=null;} const r=id!=null?D.find(x=>x.id===id):null;
